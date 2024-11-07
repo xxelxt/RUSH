@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "227828785102",
+    "project_id": "rush-xxelxt",
+    "storage_bucket": "rush-xxelxt.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:227828785102:android:e779f3abc4a93e1051d59f",
+        "android_client_info": {
+          "package_name": "com.xxelxt.rush"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHersRmoUwH0rkKqvN_jR53gce3jfD5so"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
