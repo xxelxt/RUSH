@@ -1,8 +1,8 @@
-## RUSH | Ứng dụng giao đồ ăn với Flutter
+## RUSH | Ứng dụng order cafe với Flutter
 
 ## Nhóm 11
 
-- 📋 **Đề tài**: Xây dựng ứng dụng giao đồ ăn trên Flutter
+- 📋 **Đề tài**: Xây dựng ứng dụng order cafe trên Flutter
 
 - 💻 **Lớp học phần**: 241IS26A01
 
@@ -17,20 +17,18 @@
 
 ### 🚀 Giới thiệu tên gọi
 
-*Giờ cao điểm? Ai cũng đang đói mà cứ phải ngồi chờ!*
+*Bạn đã bao giờ vội vã để bắt kịp guồng quay công việc hay học tập mà không kịp lấy cho mình một cốc cafe tiếp năng lượng?*
 
-**RUSH** là ứng dụng giao đồ ăn đáp ứng nhu cầu của những người bận rộn, đặc biệt vào giờ cao điểm *(rush hour)* khi nhu cầu ăn uống tăng cao. Với sự khẩn trương *(rush)*, tốc độ và thấu hiểu nhu cầu cần được phục vụ một cách nhanh chóng của khách hàng, dù bạn ở văn phòng, ở nhà hay đang di chuyển, RUSH luôn sẵn sàng kết nối bạn với những món ăn yêu thích từ các nhà hàng gần nhất.
+**RUSH** là ứng dụng đặt và giao cafe được phát triển nhằm đáp ứng nhu cầu của những cá nhân bận rộn, đặc biệt trong guồng quay công việc và học tập hằng ngày. Tên gọi RUSH không chỉ gợi lên sự vội vã của những buổi sáng gấp gáp, mà còn thể hiện tốc độ trong việc phục vụ và giao hàng. Dù đang trên đường đến công sở, tại trường học hay làm việc tại nhà, RUSH sẽ nhanh chóng mang đến nguồn năng lượng cần thiết để bạn bắt đầu một ngày hứng khởi.
 
-### 🎛️ Tính năng
+### ☕ Tính năng
 
-### 🫧 Ứng dụng tham khảo
+### 🍵 Ứng dụng tham khảo
 
-| Ứng dụng    | App Store                                                                      | Google Play                                                                  |
-| ----------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
-| ShopeeFood  | [Link](https://apps.apple.com/vn/app/shopeefood-food-delivery/id1137866760)    | [Link](https://play.google.com/store/apps/details?id=com.deliverynow)        |
-| GrabFood*   | [Link](https://apps.apple.com/vn/app/grab-taxi-ride-food-delivery/id647268330) | [Link](https://play.google.com/store/apps/details?id=com.grabtaxi.passenger) |
-| beFood*     | [Link](https://apps.apple.com/vn/app/be-multi-service-platform/id1440565902)   | [Link](https://play.google.com/store/apps/details?id=xyz.be.customer)        |
+| Ứng dụng          | App Store                                                                | Google Play                                                                             |
+| ----------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| The Coffee House  | [Link](https://apps.apple.com/vn/app/the-coffee-house/id1138218678?l=vi) | [Link](https://play.google.com/store/apps/details?id=com.thecoffeehouse.guestapp&hl=vi) |
+| Highlands         | [Link](https://apps.apple.com/vn/app/highlands-coffee/id1535599037?l=vi) | [Link](https://play.google.com/store/apps/details?id=com.vti.highlands&hl=vi)           |
+| Starbucks Vietnam | [Link](https://apps.apple.com/vn/app/starbucks-vietnam/id1410451879)     | [Link](https://play.google.com/store/apps/details?id=com.starbucks.vn&hl=vi)            |
 
-**Chức năng đặt đồ ăn được tích hợp trong ứng dụng Grab & Be. Không có ứng dụng riêng biệt.*
-
-### 📟 Tiện ích sử dụng
+### 🥐 Package sử dụng
