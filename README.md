@@ -28,15 +28,16 @@
 <details>
 <summary>Click để mở rộng</summary>
 
-| **Tính năng**                                             | **RUSH-ing** | **RUSH** |
-| --------------------------------------------------------- | ------------ | -------- |
-| Xem sản phẩm                                              | x            | x        |
-| Tìm kiếm sản phẩm                                         | x            | x        |
-| Thêm và chỉnh sửa sản phẩm                                | x            |          |
-| Thêm sản phẩm vào wishlist (danh sách yêu thích)          | x            | x        |
-| Đặt hàng                                                  | x            | x        |
-| Duyệt và cập nhật trạng thái đơn hàng                     | x            |          |
-| Chỉnh sửa thông tin tài khoản cá nhân                     | x            | x        |
+| **Tính năng**                                             | **admin** | **user** |
+| --------------------------------------------------------- | --------- | -------- |
+| Xem, tìm kiếm, sort sản phẩm                              | x         | x        |
+| Thêm và chỉnh sửa sản phẩm                                | x         |          |
+| Thêm sản phẩm vào wishlist (danh sách yêu thích)          |           | x        |
+| Đặt hàng                                                  |           | x        |
+| Duyệt và cập nhật trạng thái đơn hàng                     | x         |          |
+| Xem, tìm kiếm, sort khách hàng                            | x         |          |
+| Khoá tài khoản khách hàng                                 | x         |          |
+| Chỉnh sửa thông tin tài khoản cá nhân                     | x         | x        |
 
 </details>
 
@@ -53,7 +54,7 @@
 <details>
 <summary>Click để mở rộng</summary>
 
-| **Package**              | **Version**    | **Mục đích sử dụng**                                             |
+| **Package**                  | **Version**    | **Mục đích sử dụng**                                             |
 |------------------------------|----------------|------------------------------------------------------------------|
 | `json_annotation`            | `^4.8.1`       | Chú thích dữ liệu JSON cho các lớp Dart                          |
 | `json_serializable`          | `^6.7.1`       | Tự động tạo mã để chuyển đổi giữa đối tượng Dart và JSON         |
