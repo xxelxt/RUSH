@@ -1,0 +1,8 @@
+# To Generate the launcher icon for user flavor run these commands in terminal root of this project:
+# flutter pub get
+# flutter pub run flutter_launcher_icons:main -f flutter_launcher_icons-admin.yaml
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/launcher_icons/icon-admin.png" # TODO: Change this file with your icon
