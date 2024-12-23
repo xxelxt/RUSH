@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class CustomerInformation extends StatelessWidget {
   final Account customer;
+
   const CustomerInformation({
     super.key,
     required this.customer,
@@ -15,15 +16,17 @@ class CustomerInformation extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Customer Information',
+          'Thông tin khách hàng',
           style: Theme.of(context).textTheme.labelLarge,
         ),
         const SizedBox(height: 8),
+
+        // Hiển thị tên người nhận
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Name',
+              'Tên người nhận',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             Text(
@@ -32,11 +35,13 @@ class CustomerInformation extends StatelessWidget {
             ),
           ],
         ),
+
+        // Hiển thị địa chỉ email
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Email',
+              'Địa chỉ email',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             Text(
@@ -45,11 +50,13 @@ class CustomerInformation extends StatelessWidget {
             ),
           ],
         ),
+
+        // Hiển thị số điện thoại
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Phone Number',
+              'Số điện thoại',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             Text(

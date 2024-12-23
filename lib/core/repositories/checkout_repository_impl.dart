@@ -21,12 +21,9 @@ class CheckoutRepositoryImpl implements CheckoutRepository {
       subTotal += element.product!.productPrice * element.quantity;
     }
 
-    // TODO: Change your service fee here
-    double serviceFee = 0.5;
+    double serviceFee = 0;
 
-    // TODO: Change your shipping fee
-    // I'm using flat rate shipping fee here, for conveninece
-    double shippingFee = 4;
+    double shippingFee = 15000;
 
     Transaction temp = Transaction(
       transactionId: ''.generateUID(),

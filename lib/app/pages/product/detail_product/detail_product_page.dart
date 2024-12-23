@@ -1,7 +1,7 @@
 import 'package:rush/app/pages/product/detail_product/widgets/detail_action_button.dart';
 import 'package:rush/app/pages/product/detail_product/widgets/detail_product_image_card.dart';
 import 'package:rush/app/pages/product/detail_product/widgets/detail_rating_review.dart';
-import 'package:rush/app/pages/product/detail_product/widgets/detail_text_space_between..dart';
+import 'package:rush/app/pages/product/detail_product/widgets/detail_text_space_between.dart';
 import 'package:rush/app/pages/product/detail_product/widgets/user_action_button.dart';
 import 'package:rush/app/providers/product_provider.dart';
 import 'package:rush/app/providers/wishlist_provider.dart';
@@ -16,7 +16,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
 import '../../../providers/cart_provider.dart';
 
 class DetailProductPage extends StatefulWidget {
@@ -33,10 +32,15 @@ class _DetailProductPageState extends State<DetailProductPage> {
 
   @override
   void initState() {
+    // Lấy dữ liệu chi tiết sản phẩm và danh sách yêu thích khi khởi tạo
     Future.microtask(() {
+      // Lấy productId từ tham số truyền vào
       String productId = ModalRoute.of(context)!.settings.arguments as String;
 
+      // Gọi hàm trong `ProductProvider` để tải chi tiết sản phẩm
       context.read<ProductProvider>().loadDetailProduct(productId: productId);
+
+      // Gọi hàm trong `WishlistProvider` để tải danh sách yêu thích (nếu chưa có)
       var wishlistProvider = context.read<WishlistProvider>();
       if (wishlistProvider.listWishlist.isEmpty) {
         wishlistProvider.loadWishlist(accountId: accountId);
@@ -49,7 +53,8 @@ class _DetailProductPageState extends State<DetailProductPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detail Product'),
+        title: const Text('Chi tiết sản phẩm'),
+        // Hiển thị biểu tượng giỏ hàng nếu là user
         actions: _flavorConfig.flavor == Flavor.user
             ? [
                 const CartBadge(),
@@ -57,9 +62,13 @@ class _DetailProductPageState extends State<DetailProductPage> {
               ]
             : null,
       ),
+
+      // Consumer2 để listen thay đổi từ `ProductProvider` và `WishlistProvider`
       body: Consumer2<ProductProvider, WishlistProvider>(
         builder: (context, value, value2, child) {
-          if (value.isLoading || value.detailProduct == null || value2.isLoadData) {
+          if (value.isLoading ||
+              value.detailProduct == null ||
+              value2.isLoadData) {
             return const Center(
               child: CircularProgressIndicator(),
             );
@@ -67,7 +76,7 @@ class _DetailProductPageState extends State<DetailProductPage> {
 
           return Column(
             children: [
-              // Detail
+              // Phần chi tiết sản phẩm
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(
@@ -77,37 +86,41 @@ class _DetailProductPageState extends State<DetailProductPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // List Product Image
+                      // Danh sách ảnh sản phẩm
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: [
                             ...value.detailProduct!.productImage.map((imgUrl) {
-                              int index = value.detailProduct!.productImage.indexOf(imgUrl);
-                              return DetailProductImageCard(imgUrl: imgUrl, index: index);
+                              int index = value.detailProduct!.productImage
+                                  .indexOf(imgUrl);
+                              return DetailProductImageCard(
+                                  imgUrl: imgUrl, index: index);
                             })
                           ],
                         ),
                       ),
                       const SizedBox(height: 16),
 
-                      // Product Name & Price
+                      // Tên sản phẩm và giá
                       DetailTextSpaceBetween(
                         leftText: value.detailProduct!.productName,
-                        rightText: NumberFormat.compactCurrency(locale: 'en_US', symbol: '\$').format(value.detailProduct!.productPrice),
+                        rightText: NumberFormat.currency(
+                                locale: 'vi_VN', symbol: 'đ')
+                            .format(value.detailProduct!.productPrice),
                       ),
                       const SizedBox(height: 12),
 
-                      // Product Stock
+                      // Số lượng còn trong kho
                       DetailTextSpaceBetween(
-                        leftText: 'Stock Left',
+                        leftText: 'Số lượng còn trong kho',
                         rightText: value.detailProduct!.stock.toNumericFormat(),
                       ),
                       const SizedBox(height: 12),
 
-                      // Description
+                      // Mô tả sản phẩm
                       Text(
-                        'Description',
+                        'Mô tả sản phẩm',
                         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -119,21 +132,24 @@ class _DetailProductPageState extends State<DetailProductPage> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Rating (Reviews)
+                      // Đánh giá và nhận xét
                       DetailRatingReview(
                         rating: value.detailProduct!.rating,
                         totalReview: value.detailProduct!.totalReviews,
                         onTapSeeAll: () {
-                          NavigateRoute.toProductReview(context: context, productReview: value.listProductReview);
+                          // Điều hướng đến trang tất cả nhận xét
+                          NavigateRoute.toProductReview(
+                              context: context,
+                              productReview: value.listProductReview);
                         },
                       ),
                       const SizedBox(height: 12),
 
-                      // Review List
+                      // Danh sách review (nếu có)
                       if (value.listProductReview.isEmpty)
                         Center(
                           child: Text(
-                            'There are no reviews for this product yet',
+                            'Chưa có đánh giá cho sản phẩm này',
                             style: Theme.of(context).textTheme.bodySmall,
                             textAlign: TextAlign.center,
                           ),
@@ -152,11 +168,13 @@ class _DetailProductPageState extends State<DetailProductPage> {
                 ),
               ),
 
-              // Action Button
+              // Phần nút hành động
               _flavorConfig.flavor == Flavor.user
                   ? Consumer2<CartProvider, WishlistProvider>(
-                      builder: (context, cartProvider, wishlistProvider, child) {
-                        if (cartProvider.isLoading || wishlistProvider.isLoading) {
+                      builder:
+                          (context, cartProvider, wishlistProvider, child) {
+                        if (cartProvider.isLoading ||
+                            wishlistProvider.isLoading) {
                           return const Center(
                             child: Padding(
                               padding: EdgeInsets.only(bottom: 16.0),
@@ -165,15 +183,25 @@ class _DetailProductPageState extends State<DetailProductPage> {
                           );
                         }
 
-                        bool isWishlisted = wishlistProvider.listWishlist.any((element) => element.productId == value.detailProduct!.productId);
+                        // Kiểm tra sản phẩm có trong danh sách yêu thích hay không
+                        bool isWishlisted = wishlistProvider.listWishlist.any(
+                            (element) =>
+                                element.productId ==
+                                value.detailProduct!.productId);
 
                         return UserActionButton(
                           isWishlisted: isWishlisted,
+                          // Xử lý thêm hoặc xóa sản phẩm khỏi danh sách yêu thích
                           onTapFavorite: () async {
                             if (isWishlisted) {
-                              String wishlistId =
-                                  wishlistProvider.listWishlist.where((element) => element.productId == value.detailProduct!.productId).first.wishlistId;
-                              await wishlistProvider.delete(accountId: accountId, wishlistId: wishlistId);
+                              String wishlistId = wishlistProvider.listWishlist
+                                  .where((element) =>
+                                      element.productId ==
+                                      value.detailProduct!.productId)
+                                  .first
+                                  .wishlistId;
+                              await wishlistProvider.delete(
+                                  accountId: accountId, wishlistId: wishlistId);
                               return;
                             }
 
@@ -184,28 +212,35 @@ class _DetailProductPageState extends State<DetailProductPage> {
                               updatedAt: DateTime.now(),
                             );
 
-                            await wishlistProvider.add(accountId: accountId, data: data);
+                            await wishlistProvider.add(
+                                accountId: accountId, data: data);
                           },
+
+                          // Xử lý thêm sản phẩm vào giỏ hàng
                           onTapAddToCart: value.detailProduct!.stock == 0
                               ? null
                               : () async {
-                                  String accountId = FirebaseAuth.instance.currentUser!.uid;
+                                  String accountId =
+                                      FirebaseAuth.instance.currentUser!.uid;
 
-                                  // Check if product exist in cart
-                                  // If exist add the quantity
+                                  // Kiểm tra sản phẩm đã có trong giỏ hàng chưa
                                   if (cartProvider.countCart != 0) {
                                     for (var element in cartProvider.listCart) {
-                                      if (element.productId == value.detailProduct!.productId) {
+                                      if (element.productId ==
+                                          value.detailProduct!.productId) {
                                         Cart data = element;
                                         data.quantity += 1;
-                                        data.total = data.product!.productPrice * data.quantity;
-                                        await cartProvider.updateCart(data: data);
+                                        data.total =
+                                            data.product!.productPrice *
+                                                data.quantity;
+                                        await cartProvider.updateCart(
+                                            data: data);
                                         return;
                                       }
                                     }
                                   }
 
-                                  // Add Cart
+                                  // Thêm sản phẩm mới vào giỏ hàng
                                   Cart data = Cart(
                                     cartId: ''.generateUID(),
                                     product: value.detailProduct,
@@ -215,27 +250,32 @@ class _DetailProductPageState extends State<DetailProductPage> {
                                     createdAt: DateTime.now(),
                                     updatedAt: DateTime.now(),
                                   );
-                                  await cartProvider.addCart(accountId: accountId, data: data);
+                                  await cartProvider.addCart(
+                                      accountId: accountId, data: data);
                                 },
                         );
                       },
                     )
+
+                  // Nút hành động của admin
                   : DetailActionButton(
                       onTapDeleteProduct: () async {
                         var response = await showDialog(
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              title: const Text('Delete this product?'),
-                              content: const Text('This product will be deleted permanently'),
+                              title: const Text('Xoá sản phẩm này?'),
+                              content: const Text(
+                                  'Thông tin về sản phẩm sẽ bị xoá vĩnh viễn'),
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.of(context).pop(),
-                                  child: const Text('Abort'),
+                                  child: const Text('Huỷ'),
                                 ),
                                 TextButton(
-                                  onPressed: () => Navigator.of(context).pop(true),
-                                  child: const Text('Continue'),
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(true),
+                                  child: const Text('Xoá'),
                                 ),
                               ],
                             );
@@ -243,19 +283,24 @@ class _DetailProductPageState extends State<DetailProductPage> {
                         );
 
                         if (response != null) {
-                          await value.delete(productId: value.detailProduct!.productId).whenComplete(() {
+                          await value
+                              .delete(productId: value.detailProduct!.productId)
+                              .whenComplete(() {
                             Navigator.of(context).pop();
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Product Deleted Successfully'),
+                                content: Text('Xoá sản phẩm thành công'),
                               ),
                             );
                             value.loadListProduct();
                           });
                         }
                       },
+
+                      // Chuyển đến trang chỉnh sửa sản phẩm
                       onTapEditProduct: () {
-                        NavigateRoute.toEditProduct(context: context, product: value.detailProduct!);
+                        NavigateRoute.toEditProduct(
+                            context: context, product: value.detailProduct!);
                       },
                     ),
             ],

@@ -6,7 +6,12 @@ import 'detail_product_image.dart';
 class DetailProductImageCard extends StatelessWidget {
   final String imgUrl;
   final int index;
-  const DetailProductImageCard({super.key, required this.imgUrl, required this.index});
+
+  const DetailProductImageCard({
+    super.key,
+    required this.imgUrl, // URL hình ảnh
+    required this.index, // Chỉ số hình ảnh
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,21 +21,24 @@ class DetailProductImageCard extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16.0),
         child: InkWell(
+          // Widget cho phép nhấn vào hình ảnh
           onTap: () {
+            // Điều hướng tới màn hình chi tiết hình ảnh khi người dùng nhấn
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (_) => DetailProductImage(
-                  imgUrl: imgUrl,
-                  index: index,
+                  imgUrl: imgUrl, // Truyền URL hình ảnh
+                  index: index, // Truyền chỉ số hình ảnh
                 ),
               ),
             );
           },
           child: Hero(
-            tag: 'detail_image' '$index',
+            // Hiệu ứng chuyển đổi giữa các màn hình
+            tag: 'detail_image' '$index', // Gắn tag Hero để đồng bộ hiệu ứng
             child: CachedNetworkImage(
-              imageUrl: imgUrl,
-              fit: BoxFit.cover,
+              imageUrl: imgUrl, // URL hình ảnh cần hiển thị
+              fit: BoxFit.cover, // Hình ảnh được hiển thị vừa khung
               progressIndicatorBuilder: (_, child, loadingProgress) {
                 return Center(
                   child: CircularProgressIndicator(

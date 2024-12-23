@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 class AdminActionTransactionButton extends StatelessWidget {
   final String transactionID;
   final int transactionStatus;
+
   const AdminActionTransactionButton({
     super.key,
     required this.transactionStatus,
@@ -15,29 +16,41 @@ class AdminActionTransactionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TransactionStatus status = TransactionStatus.values.where((element) => element.value == transactionStatus).first;
+    // Xác định trạng thái hiện tại của đơn hàng dựa trên transactionStatus
+    TransactionStatus status = TransactionStatus.values
+        .where((element) => element.value == transactionStatus)
+        .first;
 
     void Function()? onPressed;
+
     String labelText = '';
 
     switch (status) {
       case TransactionStatus.done:
-        labelText = 'Done';
+        labelText = 'Đã hoàn thành';
+        // Không cần hành động khi trạng thái đã hoàn thành
         break;
       case TransactionStatus.reviewed:
-        labelText = 'Reviewed';
+        labelText = 'Đã đánh giá';
+        // Không cần hành động khi trạng thái đã đánh giá
         break;
       default:
-        labelText = 'Change Status';
+        labelText = 'Thay đổi trạng thái';
+        // Hiển thị hộp thoại thay đổi trạng thái khi nhấn nút
         onPressed = () async {
           await showModalBottomSheet<TransactionStatus>(
             context: context,
             builder: (context) {
               return TransactionStatusCheckbox(selectedStatus: status);
+              // Hiển thị danh sách trạng thái để admin chọn
             },
           ).then((status) {
             if (status != null) {
-              context.read<TransactionProvider>().changeStatus(transactionID: transactionID, status: status.value);
+              // Gửi yêu cầu thay đổi trạng thái đến TransactionProvider
+              context.read<TransactionProvider>().changeStatus(
+                transactionID: transactionID,
+                status: status.value,
+              );
             }
           });
         };
@@ -46,7 +59,7 @@ class AdminActionTransactionButton extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16.0),
       child: ElevatedButton(
-        onPressed: onPressed,
+        onPressed: onPressed, // Gọi hàm `onPressed` nếu không null
         child: Text(labelText),
       ),
     );

@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 class DetailActionButton extends StatelessWidget {
   final Function() onTapDeleteProduct;
+
   final Function() onTapEditProduct;
+
   const DetailActionButton({
     super.key,
-    required this.onTapDeleteProduct,
-    required this.onTapEditProduct,
+    required this.onTapDeleteProduct, // Hàm callback để xử lý xoá sản phẩm
+    required this.onTapEditProduct, // Hàm callback để xử lý cập nhật sản phẩm
   });
 
   @override
@@ -18,21 +20,24 @@ class DetailActionButton extends StatelessWidget {
       ),
       child: Row(
         children: [
+          // Nút Xoá sản phẩm
           Expanded(
             child: OutlinedButton(
               onPressed: () {
-                onTapDeleteProduct();
+                onTapDeleteProduct(); // Gọi hàm xử lý khi nhấn nút
               },
-              child: const Text('Delete Product'),
+              child: const Text('Xoá sản phẩm'),
             ),
           ),
           const SizedBox(width: 32.0),
+
+          // Nút Cập nhật sản phẩm
           Expanded(
             child: ElevatedButton(
               onPressed: () {
-                onTapEditProduct();
+                onTapEditProduct(); // Gọi hàm xử lý khi nhấn nút
               },
-              child: const Text('Edit Product'),
+              child: const Text('Cập nhật sản phẩm'),
             ),
           ),
         ],

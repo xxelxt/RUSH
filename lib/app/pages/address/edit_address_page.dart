@@ -16,9 +16,9 @@ class EditAddressPage extends StatefulWidget {
 }
 
 class _EditAddressPageState extends State<EditAddressPage> {
+  // Lưu trữ địa chỉ cần chỉnh sửa
   late Address address;
 
-  // Form Key (For validation)
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // TextEditingController
@@ -27,22 +27,24 @@ class _EditAddressPageState extends State<EditAddressPage> {
   final TextEditingController _txtCity = TextEditingController();
   final TextEditingController _txtZipCode = TextEditingController();
 
-  // FocusNode
+  // FocusNode để quản lý focus trên các trường input
   final FocusNode _fnName = FocusNode();
   final FocusNode _fnAddress = FocusNode();
   final FocusNode _fnCity = FocusNode();
   final FocusNode _fnZipCode = FocusNode();
 
-  // Validation
+  // ValidationType instance để xác thực dữ liệu
   ValidationType validation = ValidationType.instance;
 
   bool _isLoading = false;
 
   @override
   void initState() {
+    // Lấy dữ liệu địa chỉ từ tham số truyền vào khi mở trang
     Future.microtask(() {
       address = ModalRoute.of(context)!.settings.arguments as Address;
 
+      // Gán giá trị ban đầu cho các trường nhập
       _txtName.text = address.name;
       _txtAddress.text = address.address;
       _txtCity.text = address.city;
@@ -50,7 +52,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
     });
     super.initState();
   }
-
+  // Giải phóng bộ nhớ
   @override
   void dispose() {
     _txtName.dispose();
@@ -69,38 +71,34 @@ class _EditAddressPageState extends State<EditAddressPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Address'),
+        title: const Text('Cập nhật địa chỉ'),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Form
+          // Form nhập địa chỉ
           Expanded(
             child: Form(
-              key: _formKey,
+              key: _formKey, // Gắn form key để kiểm tra validation
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 16,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Input Address Name
+
                     TextFormField(
                       controller: _txtName,
                       focusNode: _fnName,
                       validator: validation.emptyValidation,
                       keyboardType: TextInputType.name,
-                      onFieldSubmitted: (value) => FocusScope.of(context).requestFocus(_fnAddress),
+                      onFieldSubmitted: (value) => FocusScope.of(context).requestFocus(_fnAddress), // Chuyển focus
                       decoration: const InputDecoration(
-                        hintText: 'Type your address name (ex: Home)',
-                        labelText: 'Name',
+                        hintText: 'Nhập loại địa chỉ của bạn (vd: Nhà riêng)',
+                        labelText: 'Loại địa chỉ',
                       ),
                     ),
                     const SizedBox(height: 16),
 
-                    // Input Street Address
                     TextFormField(
                       controller: _txtAddress,
                       focusNode: _fnAddress,
@@ -110,13 +108,12 @@ class _EditAddressPageState extends State<EditAddressPage> {
                       maxLines: 10,
                       onFieldSubmitted: (value) => FocusScope.of(context).requestFocus(_fnCity),
                       decoration: const InputDecoration(
-                        hintText: 'Type your street address',
-                        labelText: 'Address',
+                        hintText: 'Nhập địa chỉ của bạn',
+                        labelText: 'Địa chỉ',
                       ),
                     ),
                     const SizedBox(height: 16),
 
-                    // Input Address City
                     TextFormField(
                       controller: _txtCity,
                       focusNode: _fnCity,
@@ -124,13 +121,12 @@ class _EditAddressPageState extends State<EditAddressPage> {
                       keyboardType: TextInputType.text,
                       onFieldSubmitted: (value) => FocusScope.of(context).requestFocus(_fnZipCode),
                       decoration: const InputDecoration(
-                        hintText: 'Type address city',
-                        labelText: 'City',
+                        hintText: 'Nhập tỉnh/thành phố',
+                        labelText: 'Tỉnh/thành phố',
                       ),
                     ),
                     const SizedBox(height: 16),
 
-                    // Input Address Zip Code
                     TextFormField(
                       controller: _txtZipCode,
                       focusNode: _fnZipCode,
@@ -139,10 +135,10 @@ class _EditAddressPageState extends State<EditAddressPage> {
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly,
                       ],
-                      onFieldSubmitted: (value) => FocusScope.of(context).unfocus(),
+                      onFieldSubmitted: (value) => FocusScope.of(context).unfocus(), // Bỏ focus khi nhập xong
                       decoration: const InputDecoration(
-                        hintText: 'Type your address zip code',
-                        labelText: 'Zip Code',
+                        hintText: 'Nhập mã ZIP',
+                        labelText: 'Mã ZIP',
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -152,14 +148,12 @@ class _EditAddressPageState extends State<EditAddressPage> {
             ),
           ),
 
-          // Add Product Button
+          // Nút cập nhật địa chỉ
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 16,
-            ),
-            child: Consumer<AddressProvider>(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Consumer<AddressProvider>( // Sử dụng Provider để quản lý trạng thái địa chỉ
               builder: (context, value, child) {
+                // Hiển thị ProgressIndicator nếu đang tải
                 if (_isLoading) {
                   return const Center(
                     child: CircularProgressIndicator(),
@@ -167,38 +161,41 @@ class _EditAddressPageState extends State<EditAddressPage> {
                 }
 
                 return ElevatedButton(
-                  child: const Text('Edit Address'),
+                  child: const Text('Cập nhật'),
                   onPressed: () async {
-                    FocusScope.of(context).unfocus();
+                    FocusScope.of(context).unfocus(); // Ẩn bàn phím
 
+                    // Kiểm tra form hợp lệ và không đang tải
                     if (_formKey.currentState!.validate() && !_isLoading) {
                       try {
                         setState(() {
-                          _isLoading = true;
+                          _isLoading = true; // Chuyển trạng thái loading
                         });
 
                         ScaffoldMessenger.of(context).removeCurrentMaterialBanner();
 
+                        // Tạo đối tượng Address với dữ liệu mới
                         Address data = Address(
-                          addressId: address.addressId,
+                          addressId: address.addressId, // Giữ nguyên ID địa chỉ
                           name: _txtName.text,
                           address: _txtAddress.text,
                           city: _txtCity.text,
                           zipCode: _txtZipCode.text,
-                          createdAt: address.createdAt,
-                          updatedAt: DateTime.now(),
+                          createdAt: address.createdAt, // Giữ nguyên thời gian tạo
+                          updatedAt: DateTime.now(), // Cập nhật thời gian chỉnh sửa
                         );
 
-                        String accountId = FirebaseAuth.instance.currentUser!.uid;
+                        String accountId = FirebaseAuth.instance.currentUser!.uid; // Lấy ID người dùng hiện tại
 
+                        // Cập nhật địa chỉ qua Provider
                         await value.update(accountId: accountId, data: data).whenComplete(() {
                           Navigator.of(context).pop();
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Address Updated Successfully'),
+                              content: Text('Cập nhật địa chỉ thành công'),
                             ),
                           );
-                          value.getAddress(accountId: accountId);
+                          value.getAddress(accountId: accountId); // Cập nhật danh sách địa chỉ
                         });
                       } catch (e) {
                         if (mounted) {
@@ -208,7 +205,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                           );
                         }
                         setState(() {
-                          _isLoading = false;
+                          _isLoading = false; // Kết thúc trạng thái loading
                         });
                       }
                     }

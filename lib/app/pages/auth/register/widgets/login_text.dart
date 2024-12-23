@@ -12,15 +12,15 @@ class LoginText extends StatelessWidget {
       text: TextSpan(
         children: [
           TextSpan(
-            text: 'Already have an account? ',
+            text: 'Đã có tài khoản?',
             style: Theme.of(context).textTheme.bodySmall,
           ),
           TextSpan(
-            text: ' Log In',
+            text: ' Đăng nhập',
             style: Theme.of(context).textTheme.bodySmall!.apply(
-                  color: ColorsValue.primaryColor(context),
-                ),
-            recognizer: TapGestureRecognizer()
+              color: ColorsValue.primaryColor(context),
+            ),
+            recognizer: TapGestureRecognizer() // Xử lý cử chỉ nhấn vào văn bản
               ..onTap = () {
                 Navigator.of(context).pop();
               },

@@ -47,7 +47,7 @@ class _ListWishlistPageState extends State<ListWishlistPage> {
               );
         },
         controller: _txtSearch,
-        hintText: 'Search Wishlist',
+        hintText: 'Tìm kiếm sản phẩm yêu thích',
       ),
       body: Consumer<WishlistProvider>(
         builder: (context, value, child) {
@@ -67,7 +67,7 @@ class _ListWishlistPageState extends State<ListWishlistPage> {
                 // Product Count & Filter
                 CountAndOption(
                   count: value.listWishlist.length,
-                  itemName: 'Wishlists',
+                  itemName: 'sản phẩm yêu thích',
                   isSort: true,
                   onTap: () {
                     showModalBottomSheet(
@@ -102,14 +102,14 @@ class _ListWishlistPageState extends State<ListWishlistPage> {
                 if (value.listWishlist.isEmpty && _txtSearch.text.isEmpty)
                   const Center(
                     child: Text(
-                      'Wishlist is empty,\nwishlist will be shown here',
+                      'Không có sản phẩm trong danh sách yêu thích',
                       textAlign: TextAlign.center,
                     ),
                   ),
 
                 if (value.listWishlist.isEmpty && _txtSearch.text.isNotEmpty)
                   const Center(
-                    child: Text('Wishlist not found'),
+                    child: Text('Không tìm thấy sản phẩm'),
                   ),
 
                 if (value.listWishlist.isNotEmpty)

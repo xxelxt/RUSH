@@ -11,37 +11,49 @@ import 'package:provider/provider.dart';
 class ActionTransactionButton extends StatelessWidget {
   final int transactionStatus;
   final Transaction data;
+
   const ActionTransactionButton({super.key, required this.transactionStatus, required this.data});
 
   @override
   Widget build(BuildContext context) {
     void Function()? onPressed;
     String labelText = '';
+
+    // Xác định trạng thái hiện tại của giao dịch
     TransactionStatus status = TransactionStatus.values.where((element) => element.value == transactionStatus).first;
 
     switch (status) {
       case TransactionStatus.processed:
-        labelText = 'Processed';
+        labelText = 'Đang xử lý';
+        // Không cần hành động khi trạng thái là "Đang xử lý"
         break;
+
       case TransactionStatus.sent:
-        labelText = 'Sent';
+        labelText = 'Đã gửi hàng';
+        // Không cần hành động khi trạng thái là "Đã gửi hàng"
         break;
+
       case TransactionStatus.arrived:
-        labelText = 'Accepted';
+        labelText = 'Đã giao hàng';
+        // Hành động khi người dùng xác nhận đã nhận hàng
         onPressed = () {
           context.read<TransactionProvider>().accept();
         };
         break;
+
       case TransactionStatus.done:
-        labelText = 'Add Review';
+        labelText = 'Gửi đánh giá';
+        // Hành động khi trạng thái là "Đã hoàn thành"
         onPressed = () async {
           List<Review> dataReview = [];
 
+          // Lấy thông tin tài khoản người dùng hiện tại
           Account currentUser = context.read<AccountProvider>().account;
 
+          // Tạo danh sách các đánh giá từ sản phẩm trong giao dịch
           dataReview.addAll(
             data.purchasedProduct.map(
-              (e) => Review(
+                  (e) => Review(
                 reviewId: ''.generateUID(),
                 productId: e.productId,
                 product: e.product!,
@@ -54,6 +66,7 @@ class ActionTransactionButton extends StatelessWidget {
             ),
           );
 
+          // Hiển thị hộp thoại đánh giá sản phẩm
           await showModalBottomSheet(
             context: context,
             isScrollControlled: true,
@@ -67,9 +80,10 @@ class ActionTransactionButton extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         ...dataReview.map(
-                          (review) => ReviewProductForm(
+                              (review) => ReviewProductForm(
                             data: review,
                             onTapStar: (star) {
+                              // Gán số sao đánh giá cho từng sản phẩm
                               setState(() {
                                 review.star = star;
                               });
@@ -78,9 +92,7 @@ class ActionTransactionButton extends StatelessWidget {
                         ),
                         const Divider(),
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: Consumer<TransactionProvider>(
                             builder: (context, value, child) {
                               if (value.isLoading) {
@@ -92,17 +104,18 @@ class ActionTransactionButton extends StatelessWidget {
                               return ElevatedButton(
                                 onPressed: dataReview.every((element) => element.star > 0)
                                     ? () async {
-                                        await value
-                                            .submitReview(
-                                              transactionId: data.transactionId,
-                                              data: dataReview,
-                                            )
-                                            .whenComplete(
-                                              () => Navigator.of(context).pop(),
-                                            );
-                                      }
+                                  // Gửi đánh giá cho giao dịch
+                                  await value
+                                      .submitReview(
+                                    transactionId: data.transactionId,
+                                    data: dataReview,
+                                  )
+                                      .whenComplete(
+                                        () => Navigator.of(context).pop(),
+                                  );
+                                }
                                     : null,
-                                child: const Text('Add Review'),
+                                child: const Text('Gửi đánh giá'),
                               );
                             },
                           ),
@@ -117,12 +130,17 @@ class ActionTransactionButton extends StatelessWidget {
           );
         };
         break;
+
       case TransactionStatus.rejected:
-        labelText = 'Rejected';
+        labelText = 'Không nhận hàng/Bị từ chối';
+        // Không cần hành động khi trạng thái là "Bị từ chối"
         break;
+
       case TransactionStatus.reviewed:
-        labelText = 'Reviewed';
+        labelText = 'Đã đánh giá';
+        // Không cần hành động khi trạng thái là "Đã đánh giá"
         break;
+
       default:
     }
 

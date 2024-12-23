@@ -11,7 +11,7 @@ class SubtotalRow extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'Subtotal',
+          'Tổng tiền',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         Text(

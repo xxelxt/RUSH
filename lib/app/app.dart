@@ -66,6 +66,7 @@ import 'package:provider/provider.dart';
 import '../routes.dart';
 import 'pages/auth/login/login_page.dart';
 
+// StatefulWidget để quản lý trạng thái
 class App extends StatefulWidget {
   const App({super.key});
 
@@ -74,12 +75,12 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  // Collection Reference
+  // Collection Reference cho Firestore
   final CollectionReference _accountCollection = FirebaseFirestore.instance.collection(CollectionsName.kACCOUNT);
   final CollectionReference _productCollection = FirebaseFirestore.instance.collection(CollectionsName.kPRODUCT);
   final CollectionReference _transactionCollection = FirebaseFirestore.instance.collection(CollectionsName.kTRANSACTION);
 
-  // Repository Impl
+  // Repository
   late AuthRepositoryImpl _authRepositoryImpl;
   late AccountRepositoryImpl _accountRepositoryImpl;
   late ProductRepositoryImpl _productRepositoryImpl;
@@ -90,6 +91,7 @@ class _AppState extends State<App> {
   late CheckoutRepositoryImpl _checkoutRepositoryImpl;
   late TransactionRepositoryImpl _transactionRepositoryImpl;
 
+  // Khởi tạo các Repo
   @override
   void initState() {
     _authRepositoryImpl = AuthRepositoryImpl(auth: FirebaseAuth.instance, collectionReference: _accountCollection);
@@ -104,20 +106,24 @@ class _AppState extends State<App> {
     super.initState();
   }
 
+  // Xây dựng giao diện ứng dụng
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
+      // Khởi tạo các Provider cho toàn bộ ứng dụng
       providers: [
         ChangeNotifierProvider(
           create: (_) => auth_provider.AuthProvider(
             loginAccount: LoginAccount(_authRepositoryImpl),
             registerAccount: RegisterAccount(_authRepositoryImpl),
             logoutAccount: LogoutAccount(_authRepositoryImpl),
-          )..isLoggedIn(),
+          )..isLoggedIn(), // Kiểm tra trạng thái đăng nhập
         ),
+
         ChangeNotifierProvider(
-          create: (_) => DarkModeProvider()..getDarkMode(),
+          create: (_) => DarkModeProvider()..getDarkMode(), // Quản lý chế độ tối
         ),
+
         ChangeNotifierProvider(
           create: (_) => AccountProvider(
             getAccountProfile: GetAccountProfile(_accountRepositoryImpl),
@@ -126,6 +132,7 @@ class _AppState extends State<App> {
             banAccount: BanAccount(_accountRepositoryImpl),
           ),
         ),
+
         ChangeNotifierProvider(
           create: (_) => ProductProvider(
             getListProduct: GetListProduct(_productRepositoryImpl),
@@ -136,6 +143,7 @@ class _AppState extends State<App> {
             deleteProduct: DeleteProduct(_productRepositoryImpl),
           ),
         ),
+
         ChangeNotifierProvider(
           create: (_) => CartProvider(
             addAccountCart: AddAccountCart(_cartRepositoryImpl),
@@ -145,6 +153,7 @@ class _AppState extends State<App> {
             getProduct: GetProduct(_productRepositoryImpl),
           ),
         ),
+
         ChangeNotifierProvider(
           create: (_) => WishlistProvider(
             addAccountWishlist: AddAccountWishlist(_wishlistRepositoryImpl),
@@ -153,6 +162,7 @@ class _AppState extends State<App> {
             getProduct: GetProduct(_productRepositoryImpl),
           ),
         ),
+
         ChangeNotifierProvider(
           create: (_) => AddressProvider(
             addAddress: AddAddress(_addressRepositoryImpl),
@@ -162,6 +172,7 @@ class _AppState extends State<App> {
             changePrimaryAddress: ChangePrimaryAddress(_addressRepositoryImpl),
           ),
         ),
+
         ChangeNotifierProvider(
           create: (_) => PaymentMethodProvider(
             addPaymentMethod: AddPaymentMethod(_paymentMethodRepositoryImpl),
@@ -171,6 +182,7 @@ class _AppState extends State<App> {
             changePrimaryPaymentMethod: ChangePrimaryPaymentMethod(_paymentMethodRepositoryImpl),
           ),
         ),
+
         ChangeNotifierProvider(
           create: (_) => CheckoutProvider(
             startCheckout: StartCheckout(_checkoutRepositoryImpl),
@@ -179,6 +191,7 @@ class _AppState extends State<App> {
             deleteAccountCart: DeleteAccountCart(_cartRepositoryImpl),
           ),
         ),
+
         ChangeNotifierProvider(
           create: (_) => TransactionProvider(
             getAccountTransaction: GetAccountTransaction(_transactionRepositoryImpl),
@@ -191,6 +204,7 @@ class _AppState extends State<App> {
           ),
         ),
       ],
+
       child: Consumer<DarkModeProvider>(
         builder: (context, darkMode, child) {
           return MaterialApp(
@@ -198,8 +212,8 @@ class _AppState extends State<App> {
             theme: FlavorConfig.instance.flavorValues.roleConfig.theme(),
             darkTheme: FlavorConfig.instance.flavorValues.roleConfig.darkTheme(),
             themeMode: darkMode.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-            routes: routes,
-            debugShowCheckedModeBanner: false,
+            routes: routes, // Định nghĩa route
+            debugShowCheckedModeBanner: false, // Tắt banner debug
             home: Consumer<auth_provider.AuthProvider>(
               child: const BottomNavigation(),
               builder: (context, auth, child) {
@@ -212,9 +226,11 @@ class _AppState extends State<App> {
                 }
 
                 if (auth.isUserLoggedIn) {
+                  // Nếu người dùng đã đăng nhập, hiển thị `BottomNavigation`
                   return child!;
                 }
 
+                // Nếu chưa đăng nhập, chuyển đến trang đăng nhập
                 return const LoginPage();
               },
             ),

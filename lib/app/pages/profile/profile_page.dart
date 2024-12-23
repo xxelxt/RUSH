@@ -9,12 +9,11 @@ import 'package:rush/app/providers/auth_provider.dart';
 import 'package:rush/app/providers/dark_mode_provider.dart';
 import 'package:rush/app/widgets/pick_image_source.dart';
 import 'package:rush/config/flavor_config.dart';
-import 'package:rush/routes.dart';
 
+import 'package:rush/routes.dart';
 import 'package:rush/utils/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
 import 'package:provider/provider.dart';
 
 import '../../widgets/error_banner.dart';
@@ -27,19 +26,15 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // Image Picker
+  // ImagePicker để chọn ảnh
   final ImagePicker _picker = ImagePicker();
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Consumer<AccountProvider>(
         builder: (context, value, child) {
+          // Hiển thị vòng tròn loading nếu đang tải thông tin
           if (value.isLoadProfile) {
             return const Center(
               child: CircularProgressIndicator(),
@@ -52,38 +47,40 @@ class _ProfilePageState extends State<ProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 32),
-                  // Profile Picture
+
+                  // Avatar hiển thị ảnh đại diện
                   Center(
                     child: ProfilePictureAvatar(
-                      photoProfileUrl: value.account.photoProfileUrl,
-                      isLoading: value.isLoading,
+                      photoProfileUrl: value.account.photoProfileUrl, // Đường dẫn ảnh đại diện
+                      isLoading: value.isLoading, // Trạng thái loading khi cập nhật ảnh
                       onTapCamera: () {
-                        pickImage();
+                        pickImage(); // Mở dialog chọn ảnh
                       },
                     ),
                   ),
                   const SizedBox(height: 24),
 
-                  // Personal Info
+                  // Hiển thị thông tin cá nhân
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      "Personal info",
+                      "Thông tin tài khoản",
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  // Name
+
+                  // Hiển thị và chỉnh sửa họ tên
                   PersonalInfoTile(
-                    personalInfo: 'Name',
+                    personalInfo: 'Họ và tên',
                     value: value.account.fullName,
                     onTap: () {
                       showDialog(
                         context: context,
                         builder: (context) => EditProfileDialog(
-                          title: 'Edit Your Name',
-                          hintText: 'Type your name',
-                          labelText: 'Name',
+                          title: 'Cập nhật tên của bạn',
+                          hintText: 'Nhập họ và tên của bạn',
+                          labelText: 'Họ và tên',
                           initialValue: value.account.fullName,
                           fieldName: 'full_name',
                           validation: ValidationType.instance.emptyValidation,
@@ -91,7 +88,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       );
                     },
                   ),
-                  // Email Address
+
+                  // Hiển thị và chỉnh sửa email
                   PersonalInfoTile(
                     personalInfo: 'Email',
                     value: value.account.emailAddress,
@@ -99,9 +97,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       showDialog(
                         context: context,
                         builder: (context) => EditProfileDialog(
-                          title: 'Edit Your Email Address',
-                          hintText: 'Type your Email Address',
-                          labelText: 'Email Address',
+                          title: 'Cập nhật địa chỉ email của bạn',
+                          hintText: 'Nhập địa chỉ email của bạn',
+                          labelText: 'Địa chỉ email',
                           initialValue: value.account.emailAddress,
                           fieldName: 'email_address',
                           validation: ValidationType.instance.emailValidation,
@@ -109,17 +107,18 @@ class _ProfilePageState extends State<ProfilePage> {
                       );
                     },
                   ),
-                  // Phone Number
+
+                  // Hiển thị và chỉnh sửa số điện thoại
                   PersonalInfoTile(
-                    personalInfo: 'Phone',
+                    personalInfo: 'Số điện thoại',
                     value: value.account.phoneNumber.separateCountryCode(),
                     onTap: () {
                       showDialog(
                         context: context,
                         builder: (context) => EditProfileDialog(
-                          title: 'Edit Your Phone Number',
-                          hintText: 'Type your Phone Number',
-                          labelText: 'Phone Number',
+                          title: 'Cập nhật số điện thoại của bạn',
+                          hintText: 'Nhập số điện thoại của bạn',
+                          labelText: 'Số điện thoại',
                           initialValue: value.account.phoneNumber,
                           fieldName: 'phone_number',
                           validation: ValidationType.instance.emptyValidation,
@@ -129,61 +128,61 @@ class _ProfilePageState extends State<ProfilePage> {
                     },
                   ),
 
-                  // Action
                   const SizedBox(height: 24),
+
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      "Action",
+                      "Thay đổi thông tin",
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
                   const SizedBox(height: 8),
 
-                  // Reset Password
+                  // Đặt lại mật khẩu
                   ActionRow(
-                    label: 'Reset Password',
+                    label: 'Đặt lại mật khẩu',
                     onTap: () {
                       resetPassword(emailAddress: value.account.emailAddress);
                     },
                   ),
                   const Divider(height: 1),
 
-                  // Manage Adress
+                  // Quản lý địa chỉ
                   if (flavor.flavor == Flavor.user)
                     ActionRow(
-                      label: 'Manage Address',
+                      label: 'Địa chỉ giao hàng',
                       onTap: () {
                         NavigateRoute.toManageAddress(context: context);
                       },
                     ),
                   if (flavor.flavor == Flavor.user) const Divider(height: 1),
 
-                  // Manage Payment Method
+                  // Quản lý phương thức thanh toán
                   if (flavor.flavor == Flavor.user)
                     ActionRow(
-                      label: 'Manage Payment Method',
+                      label: 'Phương thức thanh toán',
                       onTap: () {
                         NavigateRoute.toManagePaymentMethod(context: context);
                       },
                     ),
                   if (flavor.flavor == Flavor.user) const Divider(height: 1),
 
-                  // Dark Mode Switch
+                  // Chế độ tối
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Expanded(
-                          child: Text('Dark Mode'),
+                          child: Text('Chế độ tối'),
                         ),
                         Consumer<DarkModeProvider>(
                           builder: (context, darkMode, child) {
                             return Switch(
                               value: darkMode.isDarkMode,
                               onChanged: (value) {
-                                darkMode.setDarkMode(value);
+                                darkMode.setDarkMode(value); // Bật hoặc tắt chế độ tối
                               },
                             );
                           },
@@ -193,20 +192,20 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const Divider(height: 1),
 
-                  // About Appliction
+                  // Thông tin ứng dụng
                   ActionRow(
-                    label: 'About Application',
+                    label: 'Thông tin ứng dụng',
                     onTap: () {
                       showAboutDialog(context: context);
                     },
                   ),
                   const Divider(height: 1),
 
-                  // Logout
+                  // Đăng xuất
                   ActionRow(
-                    label: 'Log Out',
+                    label: 'Đăng xuất',
                     onTap: () {
-                      context.read<AuthProvider>().logout();
+                      context.read<AuthProvider>().logout(); // Gọi hàm đăng xuất
                     },
                   ),
                   const SizedBox(height: 32),
@@ -219,6 +218,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // Hàm chọn ảnh từ máy hoặc camera
   pickImage() async {
     try {
       ScaffoldMessenger.of(context).removeCurrentMaterialBanner();
@@ -226,14 +226,14 @@ class _ProfilePageState extends State<ProfilePage> {
       ImageSource? pickImageSource = await showDialog(
         context: context,
         builder: (context) {
-          return const PickImageSource();
+          return const PickImageSource(); // Dialog chọn nguồn ảnh
         },
       );
 
       if (pickImageSource != null) {
         await _picker.pickImage(source: pickImageSource).then((image) {
           if (image != null) {
-            context.read<AccountProvider>().updatePhotoProfile(image);
+            context.read<AccountProvider>().updatePhotoProfile(image); // Cập nhật ảnh đại diện
           }
         });
       }
@@ -247,6 +247,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  // Hàm đặt lại mật khẩu
   resetPassword({required String emailAddress}) async {
     try {
       ScaffoldMessenger.of(context).removeCurrentMaterialBanner();
@@ -254,12 +255,12 @@ class _ProfilePageState extends State<ProfilePage> {
       await context
           .read<AuthProvider>()
           .resetPassword(
-            email: emailAddress,
-          )
+        email: emailAddress,
+      )
           .whenComplete(() {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Email For Reset Password Sent'),
+            content: Text('Đã gửi email đặt lại mật khẩu'),
           ),
         );
       });

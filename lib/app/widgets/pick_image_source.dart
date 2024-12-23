@@ -12,9 +12,10 @@ class _PickImageSourceState extends State<PickImageSource> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Pick Image From"),
-      content: const Text("Pictures can be taken directly from the camera or gallery"),
+      title: const Text("Lựa chọn hình ảnh từ"),
+      content: const Text("Lựa chọn hình ảnh từ camera hoặc thư viện ảnh"),
       actions: [
+        // Nút lựa chọn Camera
         TextButton(
           onPressed: () {
             Navigator.of(context).pop(ImageSource.camera);
@@ -24,11 +25,13 @@ class _PickImageSourceState extends State<PickImageSource> {
             textAlign: TextAlign.start,
           ),
         ),
+
+        // Nút lựa chọn Thư viện ảnh
         TextButton(
           onPressed: () {
             Navigator.of(context).pop(ImageSource.gallery);
           },
-          child: const Text("Gallery"),
+          child: const Text("Thư viện ảnh"),
         ),
       ],
     );

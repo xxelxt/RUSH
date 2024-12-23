@@ -1,15 +1,12 @@
 class CollectionsName {
-  // Top Collection
-  static const String kACCOUNT = 'Account';
-  static const String kPRODUCT = 'Product';
-  static const String kTRANSACTION = 'Transaction';
+  static const String kACCOUNT = 'Tài khoản';
+  static const String kPRODUCT = 'Sản phẩm';
+  static const String kTRANSACTION = 'Giao dịch';
 
-  // Sub Collection Account
-  static const String kWISHLIST = 'Wishlist';
-  static const String kCART = 'Cart';
-  static const String kPAYMENTMETHOD = 'Payment Method';
-  static const String kADDRESS = 'Address';
+  static const String kWISHLIST = 'Yêu thích';
+  static const String kCART = 'Giỏ hàng';
+  static const String kPAYMENTMETHOD = 'Phương thức thanh toán';
+  static const String kADDRESS = 'Địa chỉ';
 
-  // Sub Collection Product
-  static const String kREVIEW = 'Review';
+  static const String kREVIEW = 'Đánh giá';
 }

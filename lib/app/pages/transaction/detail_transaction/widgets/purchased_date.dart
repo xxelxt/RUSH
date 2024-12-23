@@ -11,11 +11,11 @@ class PurchasedDate extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'Purchased Date',
+          'Ngày thanh toán',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         Text(
-          DateFormat('dd MMMM yyyy, HH:mm').format(date),
+          DateFormat('dd/MM/yyyy, HH:mm').format(date),
           style: Theme.of(context).textTheme.labelLarge,
         ),
       ],

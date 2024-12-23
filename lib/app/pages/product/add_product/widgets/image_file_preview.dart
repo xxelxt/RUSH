@@ -4,8 +4,13 @@ import 'package:flutter/material.dart';
 
 class ImageFilePreview extends StatelessWidget {
   final File imageFile;
-  final Function() onTap;
-  const ImageFilePreview({super.key, required this.imageFile, required this.onTap});
+  final Function() onTap; // Hàm callback để xử lý sự kiện xóa ảnh
+
+  const ImageFilePreview({
+    super.key,
+    required this.imageFile, // Truyền file hình ảnh khi khởi tạo
+    required this.onTap, // Truyền hàm callback khi khởi tạo
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +19,7 @@ class ImageFilePreview extends StatelessWidget {
       width: 86,
       child: Stack(
         children: [
+          // Hiển thị hình ảnh
           Center(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
@@ -25,13 +31,15 @@ class ImageFilePreview extends StatelessWidget {
               ),
             ),
           ),
+
+          // Biểu tượng xóa ảnh ở góc phải trên
           Positioned(
             top: 0,
             right: 0,
             child: InkWell(
               child: const Icon(Icons.remove_circle_rounded),
               onTap: () {
-                onTap();
+                onTap(); // Gọi hàm callback khi nhấn vào biểu tượng
               },
             ),
           ),

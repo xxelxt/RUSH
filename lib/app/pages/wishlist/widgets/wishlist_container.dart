@@ -114,7 +114,7 @@ class WishlistContainer extends StatelessWidget {
                                     await cartProvider.addCart(accountId: accountId, data: data);
                                   }
                                 : null,
-                            child: wishlist.product!.stock > 0 ? const Text('Add to Cart') : const Text('Out of Stock'),
+                            child: wishlist.product!.stock > 0 ? const Text('Thêm vào giỏ hàng') : const Text('Hết hàng'),
                           ),
                         ],
                       );

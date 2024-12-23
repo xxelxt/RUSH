@@ -14,7 +14,7 @@ class SelectedShippingAddress extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Shipping Address',
+          'Địa chỉ giao hàng',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         ListTile(

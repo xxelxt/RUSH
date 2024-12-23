@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import '../../utils/debouncer.dart';
 
 class AppBarSearch extends StatefulWidget implements PreferredSizeWidget {
-  final void Function(String?) onChanged;
+  final void Function(String?) onChanged; // Hàm callback khi nội dung ô tìm kiếm thay đổi
   final TextEditingController controller;
   final String hintText;
-  final PreferredSizeWidget? bottom;
+  final PreferredSizeWidget? bottom; // Widget bên dưới AppBar (nếu có)
+
   const AppBarSearch({
     super.key,
     required this.onChanged,
@@ -21,12 +22,14 @@ class AppBarSearch extends StatefulWidget implements PreferredSizeWidget {
   State<AppBarSearch> createState() => _AppBarSearchState();
 
   @override
-  Size get preferredSize => _PreferredAppBarSize(kToolbarHeight, bottom?.preferredSize.height);
+  Size get preferredSize =>
+      _PreferredAppBarSize(kToolbarHeight, bottom?.preferredSize.height);
 }
 
 class _AppBarSearchState extends State<AppBarSearch> {
   FlavorConfig flavor = FlavorConfig.instance;
 
+  // Debouncer để trì hoãn xử lý đầu vào
   Debouncer db = Debouncer(
     delay: const Duration(milliseconds: 500),
   );
@@ -38,6 +41,7 @@ class _AppBarSearchState extends State<AppBarSearch> {
       title: TextField(
         controller: widget.controller,
         style: Theme.of(context).textTheme.bodySmall,
+
         decoration: InputDecoration(
           hintText: widget.hintText,
           isDense: true,
@@ -51,12 +55,16 @@ class _AppBarSearchState extends State<AppBarSearch> {
             vertical: 8,
           ),
         ),
+
+        // Xử lý khi nội dung TextField thay đổi
         onChanged: (value) {
           db.call(() {
             widget.onChanged(value);
           });
         },
       ),
+
+      // Hiển thị huy hiệu giỏ hàng (user)
       actions: flavor.flavor == Flavor.user
           ? [
               const CartBadge(),
@@ -69,7 +77,8 @@ class _AppBarSearchState extends State<AppBarSearch> {
 
 class _PreferredAppBarSize extends Size {
   _PreferredAppBarSize(this.toolbarHeight, this.bottomHeight)
-      : super.fromHeight((toolbarHeight ?? kToolbarHeight) + (bottomHeight ?? 0));
+      : super.fromHeight((toolbarHeight ?? kToolbarHeight) +
+            (bottomHeight ?? 0));
 
   final double? toolbarHeight;
   final double? bottomHeight;

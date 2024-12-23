@@ -86,4 +86,24 @@ enum TransactionStatus {
 
   final int value;
   const TransactionStatus(this.value);
+
+  // Thêm getter để trả về mô tả tiếng Việt
+  String get description {
+    switch (this) {
+      case TransactionStatus.processed:
+        return 'Đang xử lý';
+      case TransactionStatus.sent:
+        return 'Đã gửi hàng';
+      case TransactionStatus.arrived:
+        return 'Đã giao hàng';
+      case TransactionStatus.done:
+        return 'Đã hoàn thành';
+      case TransactionStatus.rejected:
+        return 'Không nhận hàng/Bị từ chối';
+      case TransactionStatus.reviewed:
+        return 'Đã đánh giá';
+      default:
+        return 'Không xác định';
+    }
+  }
 }

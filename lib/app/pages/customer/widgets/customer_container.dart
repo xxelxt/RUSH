@@ -57,13 +57,13 @@ class CustomerContainer extends StatelessWidget {
                             onPressed: () {
                               context.read<AccountProvider>().ban(accountId: customer.accountId, ban: false);
                             },
-                            child: const Text('Unban Customer'),
+                            child: const Text('Mở khoá tài khoản'),
                           )
                         : ElevatedButton(
                             onPressed: () {
                               context.read<AccountProvider>().ban(accountId: customer.accountId, ban: true);
                             },
-                            child: const Text('Ban Customer'),
+                            child: const Text('Khoá tài khoản'),
                           ),
                   ],
                 ),

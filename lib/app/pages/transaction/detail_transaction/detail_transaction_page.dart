@@ -25,7 +25,9 @@ class _DetailTransactionPageState extends State<DetailTransactionPage> {
   @override
   void initState() {
     Future.microtask(() {
+      // Lấy transactionId từ tham số truyền
       String transactionId = ModalRoute.of(context)!.settings.arguments as String;
+      // Gọi hàm để tải chi tiết giao dịch dựa trên transactionId
       context.read<TransactionProvider>().loadDetailTransaction(transactionId: transactionId);
     });
     super.initState();
@@ -35,7 +37,7 @@ class _DetailTransactionPageState extends State<DetailTransactionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detail Transaction'),
+        title: const Text('Chi tiết đơn hàng'),
       ),
       body: Consumer<TransactionProvider>(
         builder: (context, value, child) {
@@ -45,6 +47,7 @@ class _DetailTransactionPageState extends State<DetailTransactionPage> {
             );
           }
 
+          // Hiển thị nội dung chi tiết đơn hàng
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -57,39 +60,40 @@ class _DetailTransactionPageState extends State<DetailTransactionPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Status & ID
+                      // Hiển thị trạng thái đơn hàng và ID đơn hàng
                       TransactionStatusRow(
                         status: value.detailTransaction!.transactionStatus!,
                         transactionID: value.detailTransaction!.transactionId,
                       ),
                       const SizedBox(height: 8),
 
-                      // Purchased Date
+                      // Ngày mua hàng
                       PurchasedDate(
                         date: value.detailTransaction!.createdAt!,
                       ),
                       const SizedBox(height: 12),
 
-                      // Customer Information
+                      // Thông tin khách hàng (admin)
                       if (flavor.flavor == Flavor.admin)
                         CustomerInformation(customer: value.detailTransaction!.account!),
                       if (flavor.flavor == Flavor.admin) const SizedBox(height: 12),
 
-                      // Purchased Product
+                      // Chi tiết sản phẩm đã mua
                       Text(
-                        'Detail Product',
+                        'Chi tiết sản phẩm',
                         style: Theme.of(context).textTheme.labelLarge,
                       ),
                       ...value.detailTransaction!.purchasedProduct.map(
-                        (item) => DetailTransactionProduct(item: item),
+                            (item) => DetailTransactionProduct(item: item),
                       ),
-                      // Subtotal
+
+                      // Hiển thị tổng giá trị phụ
                       SubtotalRow(
                         subtotal: value.detailTransaction!.subTotal!,
                       ),
                       const SizedBox(height: 16),
 
-                      // Order Summary
+                      // Tóm tắt đơn hàng
                       OrderSummaryColumn(
                         countItems: value.countItems,
                         totalPrice: value.detailTransaction!.totalPrice!,
@@ -98,7 +102,7 @@ class _DetailTransactionPageState extends State<DetailTransactionPage> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Payment Summary
+                      // Tóm tắt thanh toán
                       PaymentSummaryColumn(
                         totalBill: value.detailTransaction!.totalBill!,
                         serviceFee: value.detailTransaction!.serviceFee!,
@@ -111,16 +115,16 @@ class _DetailTransactionPageState extends State<DetailTransactionPage> {
                 ),
               ),
 
-              // Action Button
+              // Nút hành động
               flavor.flavor == Flavor.admin
                   ? AdminActionTransactionButton(
-                      transactionID: value.detailTransaction!.transactionId,
-                      transactionStatus: value.detailTransaction!.transactionStatus!,
-                    )
+                transactionID: value.detailTransaction!.transactionId,
+                transactionStatus: value.detailTransaction!.transactionStatus!,
+              )
                   : ActionTransactionButton(
-                      transactionStatus: value.detailTransaction!.transactionStatus!,
-                      data: value.detailTransaction!,
-                    ),
+                transactionStatus: value.detailTransaction!.transactionStatus!,
+                data: value.detailTransaction!,
+              ),
             ],
           );
         },

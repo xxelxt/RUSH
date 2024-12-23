@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart'
 ///
 /// Example:
 /// ```dart
-/// import 'firebase_options.dart';
+/// import 'firebase_options_user.dart';
 /// // ...
 /// await Firebase.initializeApp(
 ///   options: DefaultFirebaseOptions.currentPlatform,
@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,19 +28,19 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for ios - '
-              'you can reconfigure this by running the FlutterFire CLI again.',
+          'you can reconfigure this by running the FlutterFire CLI again.',
         );
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
-              'you can reconfigure this by running the FlutterFire CLI again.',
+          'you can reconfigure this by running the FlutterFire CLI again.',
         );
       case TargetPlatform.windows:
         return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
-              'you can reconfigure this by running the FlutterFire CLI again.',
+          'you can reconfigure this by running the FlutterFire CLI again.',
         );
       default:
         throw UnsupportedError(
@@ -46,20 +49,12 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAIWVtYmISQx04U_lmW8SYw-wMK-njYJtk',
-    appId: '1:889463514949:web:590a14a5822913a149802c',
-    messagingSenderId: '889463514949',
-    projectId: 'rush-8753d',
-    authDomain: 'rush-8753d.firebaseapp.com',
-    storageBucket: 'rush-8753d.firebasestorage.app',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCvfA2urD7TbZIlRKVtlpKXy2lXzUIWvpM',
-    appId: '1:889463514949:android:0e75aee613ba7dd349802c',
+    appId: '1:889463514949:android:2348d0ba646f7a8949802c',
     messagingSenderId: '889463514949',
     projectId: 'rush-8753d',
+    databaseURL: 'https://rush-8753d-default-rtdb.firebaseio.com',
     storageBucket: 'rush-8753d.firebasestorage.app',
   );
 
@@ -69,6 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '889463514949',
     projectId: 'rush-8753d',
     authDomain: 'rush-8753d.firebaseapp.com',
+    databaseURL: 'https://rush-8753d-default-rtdb.firebaseio.com',
     storageBucket: 'rush-8753d.firebasestorage.app',
   );
 }

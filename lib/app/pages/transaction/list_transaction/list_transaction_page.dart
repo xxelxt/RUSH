@@ -1,6 +1,5 @@
 import 'package:rush/app/constants/order_by_value.dart';
 import 'package:rush/app/pages/transaction/list_transaction/widgets/transaction_container.dart';
-
 import 'package:rush/app/providers/transaction_provider.dart';
 import 'package:rush/app/widgets/app_bar_search.dart';
 import 'package:rush/app/widgets/count_and_option.dart';
@@ -17,17 +16,14 @@ class ListTransactionPage extends StatefulWidget {
 }
 
 class _ListTransactionPageState extends State<ListTransactionPage> {
-  // Flavor
   FlavorConfig flavor = FlavorConfig.instance;
 
-  // Text Editing Controller
   final TextEditingController _txtSearch = TextEditingController();
 
-  // Sort
+  // Giá trị sắp xếp mặc định
   OrderByEnum orderByEnum = OrderByEnum.newest;
   OrderByValue orderByValue = getEnumValue(OrderByEnum.newest);
 
-  // Search
   String search = '';
 
   @override
@@ -38,24 +34,26 @@ class _ListTransactionPageState extends State<ListTransactionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // App Bar Search
+      // Thanh tìm kiếm
       appBar: AppBarSearch(
         onChanged: (value) {
           search = value!;
           if (flavor.flavor == Flavor.admin) {
+            // Tải tất cả giao dịch (admin)
             context.read<TransactionProvider>().loadAllTransaction(
-                  search: search,
-                  orderByEnum: orderByEnum,
-                );
+              search: search,
+              orderByEnum: orderByEnum,
+            );
           } else {
+            // Tải giao dịch của user đang đăng nhập
             context.read<TransactionProvider>().loadAccountTransaction(
-                  search: search,
-                  orderByEnum: orderByEnum,
-                );
+              search: search,
+              orderByEnum: orderByEnum,
+            );
           }
         },
         controller: _txtSearch,
-        hintText: 'Search Transaction Product',
+        hintText: 'Tìm kiếm đơn hàng',
       ),
       body: Consumer<TransactionProvider>(
         builder: (context, value, child) {
@@ -72,33 +70,34 @@ class _ListTransactionPageState extends State<ListTransactionPage> {
             ),
             child: Column(
               children: [
-                // Product Count & Filter
+                // Hiển thị số lượng giao dịch và tùy chọn sắp xếp
                 CountAndOption(
-                  count: value.listTransaction.length,
-                  itemName: 'Transaction',
+                  count: value.listTransaction.length, // Số lượng giao dịch
+                  itemName: 'đơn hàng',
                   isSort: true,
                   onTap: () {
+                    // Modal để chọn kiểu sắp xếp
                     showModalBottomSheet(
                       context: context,
                       builder: (context) {
                         return StatefulBuilder(
                           builder: (context, setState) {
                             return SortFilterChip(
-                              dataEnum: OrderByEnum.values.take(4).toList(),
+                              dataEnum: OrderByEnum.values.take(4).toList(), // Các tùy chọn sắp xếp
                               onSelected: (value) {
                                 setState(() {
                                   orderByEnum = value;
                                   orderByValue = getEnumValue(value);
                                   if (flavor.flavor == Flavor.admin) {
                                     context.read<TransactionProvider>().loadAllTransaction(
-                                          search: search,
-                                          orderByEnum: orderByEnum,
-                                        );
+                                      search: search,
+                                      orderByEnum: orderByEnum,
+                                    );
                                   } else {
                                     context.read<TransactionProvider>().loadAccountTransaction(
-                                          search: search,
-                                          orderByEnum: orderByEnum,
-                                        );
+                                      search: search,
+                                      orderByEnum: orderByEnum,
+                                    );
                                   }
                                 });
                               },
@@ -112,24 +111,25 @@ class _ListTransactionPageState extends State<ListTransactionPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // Product List
+                // Hiển thị danh sách giao dịch
                 if (value.listTransaction.isEmpty && _txtSearch.text.isEmpty)
                   const Center(
                     child: Text(
-                      'Transaction is empty,\nMake your first transaction',
+                      'Không có đơn hàng nào',
                       textAlign: TextAlign.center,
                     ),
                   ),
 
                 if (value.listTransaction.isEmpty && _txtSearch.text.isNotEmpty)
                   const Center(
-                    child: Text('Transaction not found'),
+                    child: Text('Không tìm thấy đơn hàng'),
                   ),
 
                 if (value.listTransaction.isNotEmpty)
                   Expanded(
                     child: RefreshIndicator(
                       onRefresh: () async {
+                        // Làm mới danh sách giao dịch
                         if (flavor.flavor == Flavor.admin) {
                           value.loadAllTransaction(
                             search: search,
@@ -143,10 +143,11 @@ class _ListTransactionPageState extends State<ListTransactionPage> {
                         }
                       },
                       child: ListView.builder(
-                        itemCount: value.listTransaction.length,
+                        itemCount: value.listTransaction.length, // Số lượng giao dịch
                         itemBuilder: (_, index) {
                           final item = value.listTransaction[index];
 
+                          // Hiển thị từng giao dịch bằng TransactionContainer
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 12.0),
                             child: TransactionContainer(item: item),

@@ -11,13 +11,17 @@ errorBanner({required BuildContext context, required String msg}) {
     content: Text(msg),
     backgroundColor: CustomColor.error,
     actions: [
+      // Nút hành động cho thông báo
       InkWell(
         onTap: () {
           ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
         },
         child: const Text(
-          "DISMISS",
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          "Xoá thông báo",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       ),
     ],

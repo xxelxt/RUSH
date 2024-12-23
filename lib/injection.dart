@@ -55,60 +55,53 @@ import 'package:rush/core/domain/usecases/wishlist/get_account_wishlist.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 
-final getIt = GetIt.instance;
+final getIt = GetIt.instance; // Khởi tạo instance của GetIt
 
-// Firestore Top Collection Reference
-final accountCollection = FirebaseFirestore.instance.collection(CollectionsName.kACCOUNT);
-final productCollection = FirebaseFirestore.instance.collection(CollectionsName.kPRODUCT);
-final transactionCollection = FirebaseFirestore.instance.collection(CollectionsName.kTRANSACTION);
+// Các collection tham chiếu đến Firestore
+final accountCollection =
+    FirebaseFirestore.instance.collection(CollectionsName.kACCOUNT);
+final productCollection =
+    FirebaseFirestore.instance.collection(CollectionsName.kPRODUCT);
+final transactionCollection =
+    FirebaseFirestore.instance.collection(CollectionsName.kTRANSACTION);
 
+// Hàm thiết lập dependency injection
 void setup() {
-  // Repositories
+  // Đăng ký các repository với GetIt
   getIt.registerLazySingleton<AccountRepository>(
     () => AccountRepositoryImpl(collectionReference: accountCollection),
   );
-
   getIt.registerLazySingleton<AddressRepository>(
     () => AddressRepositoryImpl(collectionReference: accountCollection),
   );
-
   getIt.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(auth: FirebaseAuth.instance, collectionReference: accountCollection),
+    () => AuthRepositoryImpl(
+        auth: FirebaseAuth.instance, collectionReference: accountCollection),
   );
-
   getIt.registerLazySingleton<CartRepository>(
     () => CartRepositoryImpl(collectionReference: accountCollection),
   );
-
   getIt.registerLazySingleton<CheckoutRepository>(
     () => CheckoutRepositoryImpl(collectionReference: transactionCollection),
   );
-
   getIt.registerLazySingleton<PaymentMethodRepository>(
     () => PaymentMethodRepositoryImpl(collectionReference: accountCollection),
   );
-
   getIt.registerLazySingleton<ProductRepository>(
     () => ProductRepositoryImpl(collectionReference: productCollection),
   );
-
   getIt.registerLazySingleton<TransactionRepository>(
     () => TransactionRepositoryImpl(collectionReference: transactionCollection),
   );
-
   getIt.registerLazySingleton<WishlistRepository>(
     () => WishlistRepositoryImpl(collectionReference: accountCollection),
   );
-  // END
 
-  // Use Cases
+  // Đăng ký các usecase với GetIt
 
-  // Account Use Cases
+  // Account usecase
   getIt.registerLazySingleton<BanAccount>(
     () => BanAccount(getIt<AccountRepository>()),
-  );
-  getIt.registerLazySingleton<GetAccountProfile>(
-    () => GetAccountProfile(getIt<AccountRepository>()),
   );
   getIt.registerLazySingleton<GetAccountProfile>(
     () => GetAccountProfile(getIt<AccountRepository>()),
@@ -120,7 +113,7 @@ void setup() {
     () => UpdateAccount(getIt<AccountRepository>()),
   );
 
-  // Address Use Cases
+  // Address usecase
   getIt.registerLazySingleton<AddAddress>(
     () => AddAddress(getIt<AddressRepository>()),
   );
@@ -131,7 +124,7 @@ void setup() {
     () => UpdateAddress(getIt<AddressRepository>()),
   );
 
-  // Auth Use Cases
+  // Auth usecase
   getIt.registerLazySingleton<LoginAccount>(
     () => LoginAccount(getIt<AuthRepository>()),
   );
@@ -139,7 +132,7 @@ void setup() {
     () => RegisterAccount(getIt<AuthRepository>()),
   );
 
-  // Cart Use Cases
+  // Cart usecase
   getIt.registerLazySingleton<AddAccountCart>(
     () => AddAccountCart(getIt<CartRepository>()),
   );
@@ -153,7 +146,7 @@ void setup() {
     () => UpdateAccountCart(getIt<CartRepository>()),
   );
 
-  // Checkout Use Cases
+  // Checkout usecase
   getIt.registerLazySingleton<Pay>(
     () => Pay(getIt<CheckoutRepository>()),
   );
@@ -161,7 +154,7 @@ void setup() {
     () => StartCheckout(getIt<CheckoutRepository>()),
   );
 
-  // Payment Method Use Cases
+  // Payment Method usecase
   getIt.registerLazySingleton<AddPaymentMethod>(
     () => AddPaymentMethod(getIt<PaymentMethodRepository>()),
   );
@@ -175,7 +168,7 @@ void setup() {
     () => UpdatePaymentMethod(getIt<PaymentMethodRepository>()),
   );
 
-  // Product Use Cases
+  // Product usecase
   getIt.registerLazySingleton<AddProduct>(
     () => AddProduct(getIt<ProductRepository>()),
   );
@@ -195,7 +188,7 @@ void setup() {
     () => UpdateProduct(getIt<ProductRepository>()),
   );
 
-  // Transaction Use Cases
+  // Transaction usecase
   getIt.registerLazySingleton<AcceptTransaction>(
     () => AcceptTransaction(getIt<TransactionRepository>()),
   );
@@ -215,7 +208,7 @@ void setup() {
     () => GetTransaction(getIt<TransactionRepository>()),
   );
 
-  // Wishlist Use Cases
+  // Wishlist usecase
   getIt.registerLazySingleton<AddAccountWishlist>(
     () => AddAccountWishlist(getIt<WishlistRepository>()),
   );

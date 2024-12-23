@@ -11,36 +11,42 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AuthProvider with ChangeNotifier {
-  // Use Case
   final LoginAccount loginAccount;
   final RegisterAccount registerAccount;
   final LogoutAccount logoutAccount;
 
-  AuthProvider({required this.loginAccount, required this.registerAccount, required this.logoutAccount}) {
-    isLoggedIn();
+  AuthProvider({
+    required this.loginAccount,
+    required this.registerAccount,
+    required this.logoutAccount,
+  }) {
+    isLoggedIn(); // Kiểm tra trạng thái đăng nhập khi khởi tạo
   }
 
-  // Loading State
+  // Trạng thái tải dữ liệu
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+
+  // Trạng thái kiểm tra người dùng
   bool _checkUser = true;
   bool get checkUser => _checkUser;
 
-  // User login state
+  // Trạng thái đăng nhập của người dùng
   bool _isUserLoggedIn = false;
   bool get isUserLoggedIn => _isUserLoggedIn;
 
-  // Check role
+  // Kiểm tra vai trò của người dùng
   bool _isRoleValid = true;
   bool get isRoleValid => _isRoleValid;
 
-  // Check user login state
+  // Kiểm tra trạng thái đăng nhập của người dùng
   isLoggedIn() async {
-    _checkUser = true;
+    _checkUser = true; // Bắt đầu kiểm tra trạng thái
     FirebaseAuth authInstance = FirebaseAuth.instance;
 
-    // If the current user is not null that mean the user already logged in
+    // Kiểm tra nếu có người dùng hiện tại
     if (authInstance.currentUser != null) {
+      // Lấy thông tin tài khoản từ Firestore
       var data = await FirebaseFirestore.instance
           .collection(CollectionsName.kACCOUNT)
           .doc(authInstance.currentUser!.uid)
@@ -48,102 +54,106 @@ class AuthProvider with ChangeNotifier {
 
       Account account = Account.fromJson(data.data()!);
 
-      // Check if user role match the app & is not banned
+      // Kiểm tra vai trò người dùng và trạng thái bị khoá
       if (account.role == FlavorConfig.instance.flavor.roleValue && !account.banStatus) {
-        _isUserLoggedIn = true;
+        _isUserLoggedIn = true; // Người dùng hợp lệ
         _isRoleValid = true;
       } else {
-        authInstance.signOut();
+        authInstance.signOut(); // Đăng xuất nếu không hợp lệ
         _isRoleValid = false;
         _isUserLoggedIn = false;
       }
     } else {
-      _isUserLoggedIn = false;
+      _isUserLoggedIn = false; // Không có người dùng đăng nhập
     }
 
-    _checkUser = false;
-    notifyListeners();
+    _checkUser = false; // Hoàn thành kiểm tra
+    notifyListeners(); // Cập nhật trạng thái UI
   }
 
-  // Login Method
+  // Phương thức đăng nhập
   Future<void> login({
     required String emailAddress,
     required String password,
   }) async {
     try {
-      _isLoading = true;
+      _isLoading = true; // Bắt đầu trạng thái tải
       notifyListeners();
 
+      // Gọi usecase để xử lý đăng nhập
       await loginAccount.execute(
         email: emailAddress,
         password: password,
       );
 
-      _isLoading = false;
-      await isLoggedIn();
+      _isLoading = false; // Hoàn thành trạng thái tải
+      await isLoggedIn(); // Kiểm tra trạng thái sau đăng nhập
     } catch (e) {
-      _isLoading = false;
+      _isLoading = false; // Ngừng trạng thái tải khi lỗi xảy ra
       notifyListeners();
-      debugPrint('Login Error: ${e.toString()}');
+      debugPrint('Lỗi khi đăng nhập: ${e.toString()}');
       rethrow;
     }
   }
 
-  // Register Method
+  // Phương thức đăng ký tài khoản mới
   Future<void> register({
-    required String emailAddress,
-    required String password,
-    required String fullName,
-    required String phoneNumber,
+    required String emailAddress, // Email người dùng
+    required String password, // Mật khẩu
+    required String fullName, // Tên đầy đủ
+    required String phoneNumber, // Số điện thoại
   }) async {
     try {
       _isLoading = true;
       notifyListeners();
 
+      // Gọi Use Case để xử lý đăng ký
       await registerAccount.execute(
         email: emailAddress,
         password: password,
         fullName: fullName,
         phoneNumber: phoneNumber,
-        role: FlavorConfig.instance.flavor.roleValue,
+        role: FlavorConfig.instance.flavor.roleValue, // Vai trò mặc định từ cấu hình
       );
 
       _isLoading = false;
-      isLoggedIn();
+      isLoggedIn(); // Kiểm tra trạng thái sau đăng ký
     } catch (e) {
-      _isLoading = false;
+      _isLoading = false; // Ngừng trạng thái tải nếu lỗi xảy ra
       notifyListeners();
-      debugPrint('Register Error: ${e.toString()}');
+      debugPrint('Lỗi khi đăng ký tài khoản mới: ${e.toString()}');
       rethrow;
     }
   }
 
-  // Logout Method
+  // Phương thức đăng xuất
   logout() async {
     try {
+      // Gọi usecase để xử lý đăng xuất
       await logoutAccount.execute();
 
-      isLoggedIn();
+      isLoggedIn(); // Cập nhật trạng thái sau đăng xuất
     } catch (e) {
-      debugPrint('Logout Error: ${e.toString()}');
+      debugPrint('Lỗi khi đăng xuất: ${e.toString()}');
       rethrow;
     }
   }
 
-  // Reset Password Method
+  // Phương thức đặt lại mật khẩu
   resetPassword({required String email}) async {
     try {
       _isLoading = true;
       notifyListeners();
 
+      // Gửi email đặt lại mật khẩu
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
 
       _isLoading = false;
       notifyListeners();
     } catch (e) {
-      _isLoading = false;
+      _isLoading = false; // Ngừng trạng thái tải nếu lỗi xảy ra
       notifyListeners();
-      debugPrint('Reset Password Error: ${e.toString()}');
+      debugPrint('Lỗi khi đặt lại mật khẩu: ${e.toString()}');
       rethrow;
     }
   }

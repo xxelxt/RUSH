@@ -15,7 +15,7 @@ class SelectedPaymentMethod extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Payment Method',
+          'Phương thức thanh toán',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         ListTile(

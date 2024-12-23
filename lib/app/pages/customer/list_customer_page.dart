@@ -16,37 +16,32 @@ class ListCustomerPage extends StatefulWidget {
 }
 
 class _ListCustomerPageState extends State<ListCustomerPage> {
-  // Text Editing Controller
   final TextEditingController _txtSearch = TextEditingController();
 
-  // Sort
-  OrderByEnum orderByEnum = OrderByEnum.newest;
+  // Giá trị sắp xếp
+  OrderByEnum orderByEnum = OrderByEnum.newest; // Mặc định là mới nhất
   OrderByValue orderByValue = getEnumValue(OrderByEnum.newest);
 
-  // Search
   String search = '';
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // App Bar Search
       appBar: AppBarSearch(
         onChanged: (value) {
+          // Gọi hàm lấy danh sách tài khoản khi thay đổi dữ liệu tìm kiếm
           context.read<AccountProvider>().getListAccount(
-                search: _txtSearch.text,
-                orderByEnum: orderByEnum,
-              );
+            search: _txtSearch.text,
+            orderByEnum: orderByEnum,
+          );
         },
-        controller: _txtSearch,
-        hintText: 'Search Customer',
+        controller: _txtSearch, // Quản lý dữ liệu nhập vào
+        hintText: 'Tìm kiếm khách hàng',
       ),
+
       body: Consumer<AccountProvider>(
         builder: (context, value, child) {
+          // Hiển thị vòng tròn loading khi danh sách đang tải
           if (value.isLoadListAccount) {
             return const Center(
               child: CircularProgressIndicator(),
@@ -54,17 +49,14 @@ class _ListCustomerPageState extends State<ListCustomerPage> {
           }
 
           return Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 16,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Column(
               children: [
-                // Product Count & Filter
+                // Hiển thị số lượng khách hàng và nút lọc sắp xếp
                 CountAndOption(
-                  count: value.listAccount.length,
-                  itemName: 'Customer',
-                  isSort: true,
+                  count: value.listAccount.length, // Số lượng khách hàng
+                  itemName: 'khách hàng',
+                  isSort: true, // Cho phép sắp xếp
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
@@ -78,9 +70,9 @@ class _ListCustomerPageState extends State<ListCustomerPage> {
                                   orderByEnum = value;
                                   orderByValue = getEnumValue(value);
                                   context.read<AccountProvider>().getListAccount(
-                                        search: _txtSearch.text,
-                                        orderByEnum: value,
-                                      );
+                                    search: _txtSearch.text,
+                                    orderByEnum: value,
+                                  );
                                 });
                               },
                               selectedEnum: orderByEnum,
@@ -93,37 +85,38 @@ class _ListCustomerPageState extends State<ListCustomerPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // Product List
+                // Hiển thị danh sách khách hàng
                 if (value.listAccount.isEmpty && _txtSearch.text.isEmpty)
                   const Center(
                     child: Text(
-                      'Customer is empty,\ncustomer will be shown here',
+                      'Không có khách hàng nào',
                       textAlign: TextAlign.center,
                     ),
                   ),
 
                 if (value.listAccount.isEmpty && _txtSearch.text.isNotEmpty)
                   const Center(
-                    child: Text('Customer not found'),
+                    child: Text('Không tìm thấy khách hàng'),
                   ),
 
                 if (value.listAccount.isNotEmpty)
                   Expanded(
                     child: RefreshIndicator(
                       onRefresh: () async {
+                        // Làm mới danh sách khách hàng khi kéo xuống
                         await context.read<AccountProvider>().getListAccount(
-                              search: _txtSearch.text,
-                              orderByEnum: orderByEnum,
-                            );
+                          search: _txtSearch.text,
+                          orderByEnum: orderByEnum,
+                        );
                       },
                       child: ListView.builder(
-                        itemCount: value.listAccount.length,
+                        itemCount: value.listAccount.length, // Số lượng khách hàng
                         itemBuilder: (_, index) {
-                          final customer = value.listAccount[index];
+                          final customer = value.listAccount[index]; // Lấy từng khách hàng
 
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 8.0),
-                            child: CustomerContainer(customer: customer),
+                            child: CustomerContainer(customer: customer), // Hiển thị thông tin khách hàng
                           );
                         },
                       ),

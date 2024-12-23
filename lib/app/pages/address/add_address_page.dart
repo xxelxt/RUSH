@@ -17,7 +17,6 @@ class AddAddressPage extends StatefulWidget {
 }
 
 class _AddAddressPageState extends State<AddAddressPage> {
-  // Form Key (For validation)
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // TextEditingController
@@ -26,13 +25,13 @@ class _AddAddressPageState extends State<AddAddressPage> {
   final TextEditingController _txtCity = TextEditingController();
   final TextEditingController _txtZipCode = TextEditingController();
 
-  // FocusNode
+  // FocusNode để quản lý focus trên các trường input
   final FocusNode _fnName = FocusNode();
   final FocusNode _fnAddress = FocusNode();
   final FocusNode _fnCity = FocusNode();
   final FocusNode _fnZipCode = FocusNode();
 
-  // Validation
+  // Instance của ValidationType để xác thực input
   ValidationType validation = ValidationType.instance;
 
   bool _isLoading = false;
@@ -42,6 +41,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
     super.initState();
   }
 
+  // Giải phóng bộ nhớ
   @override
   void dispose() {
     _txtName.dispose();
@@ -60,83 +60,80 @@ class _AddAddressPageState extends State<AddAddressPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Address'),
+        title: const Text('Thêm địa chỉ'),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Form
+          // Form nhập địa chỉ
           Expanded(
             child: Form(
-              key: _formKey,
+              key: _formKey, // Gắn form key để kiểm tra validation
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 16,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Input Address Name
+                    // Input: Loại địa chỉ
                     TextFormField(
-                      controller: _txtName,
-                      focusNode: _fnName,
-                      textCapitalization: TextCapitalization.words,
-                      validator: validation.emptyValidation,
-                      keyboardType: TextInputType.name,
-                      onFieldSubmitted: (value) => FocusScope.of(context).requestFocus(_fnAddress),
+                      controller: _txtName, // Controller cho trường nhập
+                      focusNode: _fnName, // FocusNode để quản lý focus
+                      textCapitalization: TextCapitalization.words, // Viết hoa chữ cái đầu
+                      validator: validation.emptyValidation, // Xác thực trường không rỗng
+                      keyboardType: TextInputType.name, // Kiểu bàn phím cho tên
+                      onFieldSubmitted: (value) => FocusScope.of(context).requestFocus(_fnAddress), // Chuyển focus
                       decoration: const InputDecoration(
-                        hintText: 'Type your address name (ex: Home)',
-                        labelText: 'Name',
+                        hintText: 'Nhập loại địa chỉ của bạn (vd: Nhà riêng)',
+                        labelText: 'Loại địa chỉ',
                       ),
                     ),
                     const SizedBox(height: 16),
 
-                    // Input Street Address
+                    // Input: Địa chỉ chi tiết
                     TextFormField(
                       controller: _txtAddress,
                       focusNode: _fnAddress,
                       validator: validation.emptyValidation,
-                      keyboardType: TextInputType.streetAddress,
+                      keyboardType: TextInputType.streetAddress, // Kiểu bàn phím địa chỉ
                       textCapitalization: TextCapitalization.words,
-                      minLines: 2,
-                      maxLines: 10,
+                      minLines: 2, // Số dòng tối thiểu
+                      maxLines: 10, // Số dòng tối đa
                       onFieldSubmitted: (value) => FocusScope.of(context).requestFocus(_fnCity),
                       decoration: const InputDecoration(
-                        hintText: 'Type your street address',
-                        labelText: 'Address',
+                        hintText: 'Nhập địa chỉ của bạn',
+                        labelText: 'Địa chỉ',
                       ),
                     ),
                     const SizedBox(height: 16),
 
-                    // Input Address City
+                    // Input: Thành phố
                     TextFormField(
                       controller: _txtCity,
                       focusNode: _fnCity,
                       validator: validation.emptyValidation,
                       textCapitalization: TextCapitalization.words,
-                      keyboardType: TextInputType.text,
+                      keyboardType: TextInputType.text, // Kiểu bàn phím văn bản
                       onFieldSubmitted: (value) => FocusScope.of(context).requestFocus(_fnZipCode),
                       decoration: const InputDecoration(
-                        hintText: 'Type address city',
-                        labelText: 'City',
+                        hintText: 'Nhập tỉnh/thành phố',
+                        labelText: 'Tỉnh/thành phố',
                       ),
                     ),
                     const SizedBox(height: 16),
 
-                    // Input Address Zip Code
+                    // Input: Mã ZIP
                     TextFormField(
                       controller: _txtZipCode,
                       focusNode: _fnZipCode,
                       validator: validation.emptyValidation,
                       keyboardType: TextInputType.number,
                       inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
+                        FilteringTextInputFormatter.digitsOnly, // Chỉ cho phép nhập số
                       ],
-                      onFieldSubmitted: (value) => FocusScope.of(context).unfocus(),
+                      onFieldSubmitted: (value) => FocusScope.of(context).unfocus(), // Bỏ focus khi nhập xong
                       decoration: const InputDecoration(
-                        hintText: 'Type your address zip code',
-                        labelText: 'Zip Code',
+                        hintText: 'Nhập mã ZIP',
+                        labelText: 'Mã ZIP',
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -146,14 +143,12 @@ class _AddAddressPageState extends State<AddAddressPage> {
             ),
           ),
 
-          // Add Product Button
+          // Nút thêm địa chỉ
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 16,
-            ),
-            child: Consumer<AddressProvider>(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Consumer<AddressProvider>( // Sử dụng Provider để quản lý trạng thái
               builder: (context, value, child) {
+                // Nếu đang tải, hiển thị ProgressIndicator
                 if (_isLoading) {
                   return const Center(
                     child: CircularProgressIndicator(),
@@ -161,20 +156,22 @@ class _AddAddressPageState extends State<AddAddressPage> {
                 }
 
                 return ElevatedButton(
-                  child: const Text('Add Address'),
+                  child: const Text('Thêm'),
                   onPressed: () async {
-                    FocusScope.of(context).unfocus();
+                    FocusScope.of(context).unfocus(); // Ẩn bàn phím
 
+                    // Kiểm tra form hợp lệ và không đang tải
                     if (_formKey.currentState!.validate() && !_isLoading) {
                       try {
                         setState(() {
-                          _isLoading = true;
+                          _isLoading = true; // Bắt đầu trạng thái loading
                         });
 
                         ScaffoldMessenger.of(context).removeCurrentMaterialBanner();
 
+                        // Tạo đối tượng Address từ dữ liệu nhập
                         Address data = Address(
-                          addressId: ''.generateUID(),
+                          addressId: ''.generateUID(), // Tạo ID duy nhất
                           name: _txtName.text,
                           address: _txtAddress.text,
                           city: _txtCity.text,
@@ -183,16 +180,17 @@ class _AddAddressPageState extends State<AddAddressPage> {
                           updatedAt: DateTime.now(),
                         );
 
-                        String accountId = FirebaseAuth.instance.currentUser!.uid;
+                        String accountId = FirebaseAuth.instance.currentUser!.uid; // Lấy ID người dùng hiện tại
 
+                        // Gửi dữ liệu lên Provider để thêm địa chỉ
                         await value.add(accountId: accountId, data: data).whenComplete(() {
                           Navigator.of(context).pop();
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Address Added Successfully'),
+                              content: Text('Thêm địa chỉ thành công'),
                             ),
                           );
-                          value.getAddress(accountId: accountId);
+                          value.getAddress(accountId: accountId); // Cập nhật danh sách địa chỉ
                         });
                       } catch (e) {
                         if (mounted) {
@@ -203,7 +201,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
                         }
 
                         setState(() {
-                          _isLoading = false;
+                          _isLoading = false; // Kết thúc trạng thái loading
                         });
                       }
                     }

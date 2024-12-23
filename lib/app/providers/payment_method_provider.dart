@@ -21,102 +21,117 @@ class PaymentMethodProvider with ChangeNotifier {
     required this.changePrimaryPaymentMethod,
   });
 
-  // Loading State
+  // Trạng thái tải dữ liệu
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  // List Payment Method
+  // Danh sách phương thức thanh toán
   List<PaymentMethod> _listPaymentMethod = [];
   List<PaymentMethod> get listPaymentMethod => _listPaymentMethod;
 
+  // Thêm phương thức thanh toán mới
   Future<void> add({
     required String accountId,
-    required PaymentMethod data,
+    required PaymentMethod data, // Thông tin phương thức thanh toán
   }) async {
     try {
-      _isLoading = true;
+      _isLoading = true; // Đặt trạng thái đang tải
       notifyListeners();
 
+      // Gọi usecase để thêm phương thức thanh toán
       await addPaymentMethod.execute(accountId: accountId, data: data);
-      _listPaymentMethod.add(data);
+      _listPaymentMethod.add(data); // Thêm vào danh sách hiện tại
 
-      _isLoading = false;
+      _isLoading = false; // Hoàn thành
       notifyListeners();
     } catch (e) {
-      _isLoading = false;
-      debugPrint('Add Payment Method Error: ${e.toString()}');
+      _isLoading = false; // Ngừng nếu xảy ra lỗi
+      debugPrint('Lỗi khi thêm phương thức thanh toán: ${e.toString()}');
       notifyListeners();
     }
   }
 
+  // Lấy danh sách phương thức thanh toán của tài khoản
   getPaymentMethod({required String accountId}) async {
     try {
       _isLoading = true;
       notifyListeners();
-      _listPaymentMethod.clear();
+      _listPaymentMethod.clear(); // Xoá danh sách cũ trước khi tải mới
 
+      // Gọi usecase để lấy danh sách phương thức thanh toán
       var response = await getAccountPaymentMethod.execute(accountId: accountId);
 
       if (response.isNotEmpty) {
-        _listPaymentMethod = response;
+        _listPaymentMethod = response; // Cập nhật danh sách
       }
 
-      _isLoading = false;
+      _isLoading = false; // Hoàn thành
       notifyListeners();
     } catch (e) {
       _isLoading = false;
-      debugPrint('Get Payment Method Error: ${e.toString()}');
+      debugPrint('Lỗi khi lấy thông tin phương thức thanh toán: ${e.toString()}');
       notifyListeners();
     }
   }
 
+  // Cập nhật thông tin phương thức thanh toán
   Future<void> update({
     required String accountId,
-    required PaymentMethod data,
+    required PaymentMethod data, // Thông tin mới của phương thức thanh toán
   }) async {
     try {
       _isLoading = true;
       notifyListeners();
 
+      // Gọi usecase để cập nhật phương thức thanh toán
       await updatePaymentMethod.execute(accountId: accountId, data: data);
+
+      // Tìm và cập nhật thông tin trong danh sách hiện tại
       int index = listPaymentMethod.indexWhere((element) => element.paymentMethodId == data.paymentMethodId);
       listPaymentMethod[index] = data;
 
       _isLoading = false;
       notifyListeners();
     } catch (e) {
-      _isLoading = false;
-      debugPrint('Update Payment Method Error: ${e.toString()}');
+      _isLoading = false; // Ngừng nếu xảy ra lỗi
+      debugPrint('Lỗi khi cập nhật phương thức thanh toán: ${e.toString()}');
       notifyListeners();
     }
   }
 
+  // Xoá phương thức thanh toán
   delete({
     required String accountId,
     required String paymentMethodId,
   }) async {
     try {
+      // Gọi usecase để xoá phương thức thanh toán
       await deletePaymentMethod.execute(accountId: accountId, paymentMethodId: paymentMethodId);
+
+      // Loại bỏ phương thức khỏi danh sách hiện tại
       listPaymentMethod.removeWhere((element) => element.paymentMethodId == paymentMethodId);
 
-      notifyListeners();
+      notifyListeners(); // Thông báo cập nhật UI
     } catch (e) {
-      debugPrint('Delete Payment Method Error: ${e.toString()}');
+      debugPrint('Lỗi khi xoá phương thức thanh toán: ${e.toString()}');
       notifyListeners();
     }
   }
 
+  // Thay đổi phương thức thanh toán mặc định
   Future<void> changePrimary({
     required String accountId,
-    required PaymentMethod data,
-    required PaymentMethod? oldData,
+    required PaymentMethod data, // Phương thức thanh toán mới cần đặt làm mặc định
+    required PaymentMethod? oldData, // Phương thức thanh toán hiện tại (nếu có)
   }) async {
+    // Kiểm tra nếu phương thức mới trùng với phương thức hiện tại thì không cần thay đổi
     if (oldData != null && oldData == data) return;
 
     try {
+      // Gọi usecase để thay đổi phương thức thanh toán mặc định
       await changePrimaryPaymentMethod.execute(accountId: accountId, paymentMethod: data);
     } catch (e) {
-      debugPrint('Change Primary Payment Method Error: ${e.toString()}');
+      debugPrint('Lỗi khi thay đổi phương thức thanh toán mặc định: ${e.toString()}');
     }
   }
 }

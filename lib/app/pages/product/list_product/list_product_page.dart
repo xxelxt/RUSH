@@ -1,5 +1,4 @@
 import 'package:rush/app/constants/order_by_value.dart';
-
 import 'package:rush/app/providers/product_provider.dart';
 import 'package:rush/app/widgets/app_bar_search.dart';
 import 'package:rush/app/widgets/count_and_option.dart';
@@ -19,50 +18,46 @@ class ListProductPage extends StatefulWidget {
 }
 
 class _ListProductPageState extends State<ListProductPage> {
-  // Flavor
   FlavorConfig flavor = FlavorConfig.instance;
 
-  // Text Editing Controller
   final TextEditingController _txtSearch = TextEditingController();
 
-  // Sort
+  // Giá trị sắp xếp mặc định
   OrderByEnum orderByEnum = OrderByEnum.newest;
   OrderByValue orderByValue = getEnumValue(OrderByEnum.newest);
 
-  // Search
   String search = '';
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Nút thêm sản phẩm cho admin flavor
       floatingActionButton: flavor.flavor == Flavor.admin
           ? FloatingActionButton(
-              onPressed: () {
-                NavigateRoute.toAddProduct(context: context);
-              },
-              child: const Icon(
-                Icons.add_rounded,
-                color: Colors.white,
-              ),
-            )
+        onPressed: () {
+          NavigateRoute.toAddProduct(context: context); // Điều hướng đến trang thêm sản phẩm
+        },
+        child: const Icon(
+          Icons.add_rounded,
+          color: Colors.white,
+        ),
+      )
           : null,
-      // App Bar Search
+
+      // Thanh tìm kiếm
       appBar: AppBarSearch(
         onChanged: (value) {
           search = value!;
           context.read<ProductProvider>().loadListProduct(
-                search: search,
-                orderByEnum: orderByEnum,
-              );
+            search: search,
+            orderByEnum: orderByEnum,
+          );
         },
         controller: _txtSearch,
-        hintText: 'Search Product',
+        hintText: 'Tìm kiếm sản phẩm',
       ),
+
+      // Nội dung chính của trang
       body: Consumer<ProductProvider>(
         builder: (context, value, child) {
           if (value.isLoading) {
@@ -78,10 +73,10 @@ class _ListProductPageState extends State<ListProductPage> {
             ),
             child: Column(
               children: [
-                // Product Count & Filter
+                // Bộ đếm sản phẩm và tùy chọn sắp xếp
                 CountAndOption(
                   count: value.listProduct.length,
-                  itemName: 'Products',
+                  itemName: 'sản phẩm',
                   isSort: true,
                   onTap: () {
                     showModalBottomSheet(
@@ -90,15 +85,15 @@ class _ListProductPageState extends State<ListProductPage> {
                         return StatefulBuilder(
                           builder: (context, setState) {
                             return SortFilterChip(
-                              dataEnum: OrderByEnum.values.take(4).toList(),
+                              dataEnum: OrderByEnum.values.take(4).toList(), // Các kiểu sắp xếp
                               onSelected: (value) {
                                 setState(() {
-                                  orderByEnum = value;
+                                  orderByEnum = value; // Cập nhật kiểu sắp xếp
                                   orderByValue = getEnumValue(value);
                                   context.read<ProductProvider>().loadListProduct(
-                                        search: _txtSearch.text,
-                                        orderByEnum: orderByEnum,
-                                      );
+                                    search: _txtSearch.text, // Áp dụng tìm kiếm hiện tại
+                                    orderByEnum: orderByEnum,
+                                  );
                                 });
                               },
                               selectedEnum: orderByEnum,
@@ -111,45 +106,46 @@ class _ListProductPageState extends State<ListProductPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // Product List
+                // Danh sách sản phẩm
                 if (value.listProduct.isEmpty && _txtSearch.text.isEmpty)
                   const Center(
                     child: Text(
-                      'Products is empty,\navailable product will be shown here',
+                      'Không có sản phẩm nào',
                       textAlign: TextAlign.center,
                     ),
                   ),
 
                 if (value.listProduct.isEmpty && _txtSearch.text.isNotEmpty)
                   const Center(
-                    child: Text('Products not found'),
+                    child: Text('Không tìm thấy sản phẩm'),
                   ),
 
                 if (value.listProduct.isNotEmpty)
                   Expanded(
                     child: RefreshIndicator(
                       onRefresh: () async {
+                        // Làm mới danh sách sản phẩm
                         await value.loadListProduct(
                           search: search,
                           orderByEnum: orderByEnum,
                         );
                       },
                       child: GridView.builder(
-                        itemCount: value.listProduct.length,
+                        itemCount: value.listProduct.length, // Số lượng sản phẩm
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 16,
                           mainAxisSpacing: 8,
-                          childAspectRatio:
-                              MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 1.4),
+                          childAspectRatio: MediaQuery.of(context).size.width /
+                              (MediaQuery.of(context).size.height / 1.4),
                         ),
                         itemBuilder: (_, index) {
-                          final item = value.listProduct[index];
+                          final item = value.listProduct[index]; // Sản phẩm hiện tại
 
                           return ProductContainer(
-                            item: item,
+                            item: item, // Hiển thị sản phẩm
                             onTap: () {
-                              NavigateRoute.toDetailProduct(context: context, productId: item.productId);
+                              NavigateRoute.toDetailProduct(context: context, productId: item.productId); // Điều hướng đến chi tiết sản phẩm
                             },
                           );
                         },

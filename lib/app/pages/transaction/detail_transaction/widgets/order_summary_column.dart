@@ -8,6 +8,7 @@ class OrderSummaryColumn extends StatelessWidget {
   final double totalPrice;
   final double shippingFee;
   final Address shippingAddress;
+
   const OrderSummaryColumn({
     super.key,
     required this.countItems,
@@ -22,19 +23,23 @@ class OrderSummaryColumn extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Order Summary',
+          'Tóm tắt đơn hàng',
           style: Theme.of(context).textTheme.labelLarge,
         ),
         const SizedBox(height: 8),
+
+        // Hiển thị thông tin chi tiết của địa chỉ giao hàng
         SelectedShippingAddress(
           shippingAddress: shippingAddress,
         ),
         const SizedBox(height: 8),
+
+        // Hiển thị tổng giá trị đơn hàng
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Total Price ($countItems Items)',
+              'Tổng giá trị ($countItems sản phẩm)',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             Text(
@@ -43,11 +48,13 @@ class OrderSummaryColumn extends StatelessWidget {
             ),
           ],
         ),
+
+        // Hiển thị phí giao hàng
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Shipping Fee',
+              'Phí giao hàng',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             Text(

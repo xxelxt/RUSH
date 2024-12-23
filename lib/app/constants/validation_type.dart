@@ -1,17 +1,20 @@
 class ValidationType {
-  // Singleton
+  // Constructor private, ngăn việc tạo instance từ bên ngoài
   ValidationType._privateConstructor();
+
+  // Khởi tạo instance duy nhất của lớp
   static final ValidationType _instance = ValidationType._privateConstructor();
+
+  // Getter để truy cập instance duy nhất từ bên ngoài
   static ValidationType get instance => _instance;
 
-  // Alert Value
-  final String _alertEmptyField = 'You must fill this field';
-  final String _alertEmailIsNotValid = 'Email address is not valid';
-  final String _alertPasswordLength = 'Password must be at least more than 6 characters';
-  final String _alertConfirmPassword = 'Confirm Password not match with Password';
-  final String _alertCardNumberLength = 'Payment card numbers are composed of 8 to 19 digits';
-  final String _alertCvvLength = 'CVV are 3 to 4 digits number printed on your credit card';
-  final String _alertPhoneNumberLength = 'Phone number must be at least more than 10 characters';
+  final String _alertEmptyField = 'Vui lòng điền vào trường này';
+  final String _alertEmailIsNotValid = 'Địa chỉ email không hợp lệ';
+  final String _alertPasswordLength = 'Mật khẩu cần dài ít nhất 6 ký tự';
+  final String _alertConfirmPassword = 'Mật khẩu nhập lại không trùng';
+  final String _alertCardNumberLength = 'Nhập thẻ thanh toán dài từ 8 đến 19 chữ số';
+  final String _alertCvvLength = 'Nhập số CVV dài 3 hoặc 4 chữ số phía sau thẻ của bạn';
+  final String _alertPhoneNumberLength = 'Nhập số điện thoại có ít nhất 10 chữ số';
 
   String? emailValidation(String? value) {
     RegExp emailRegex = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");

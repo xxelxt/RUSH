@@ -6,17 +6,25 @@ import 'package:flutter/material.dart';
 
 import '../../../routes.dart';
 
+// Hiển thị chi tiết sản phẩm trong giỏ hàng
 class CartContainer extends StatelessWidget {
-  final Cart item;
-  final Function() onTapAdd;
-  final Function() onTapRemove;
-  const CartContainer({super.key, required this.item, required this.onTapAdd, required this.onTapRemove});
+  final Cart item; // Thông tin sản phẩm trong giỏ hàng
+  final Function() onTapAdd; // Hàm callback khi tăng số lượng sản phẩm
+  final Function() onTapRemove; // Hàm callback khi giảm số lượng sản phẩm
+
+  const CartContainer({
+    super.key,
+    required this.item,
+    required this.onTapAdd,
+    required this.onTapRemove,
+  });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(8.0),
       onTap: () {
+        // Chuyển đến màn hình chi tiết sản phẩm
         NavigateRoute.toDetailProduct(context: context, productId: item.productId);
       },
       child: Container(
@@ -25,6 +33,7 @@ class CartContainer extends StatelessWidget {
         width: double.infinity,
         child: Row(
           children: [
+            // Hình ảnh sản phẩm
             ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
               child: CachedNetworkImage(
@@ -45,30 +54,38 @@ class CartContainer extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
+
+            // Thông tin sản phẩm
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Tên sản phẩm
                   Expanded(
                     child: Text(
                       item.product!.productName,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ),
+
+                  // Giá sản phẩm và số lượng
                   Expanded(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        // Giá sản phẩm
                         Text(
                           item.product!.productPrice.toCurrency(),
                           style: Theme.of(context).textTheme.labelLarge,
                         ),
+
+                        // Điều khiển số lượng sản phẩm
                         CountCartQuantity(
-                          onTapAdd: onTapAdd,
-                          onTapRemove: onTapRemove,
-                          quantity: item.quantity,
+                          onTapAdd: onTapAdd, // Callback khi tăng số lượng
+                          onTapRemove: onTapRemove, // Callback khi giảm số lượng
+                          quantity: item.quantity, // Số lượng hiện tại
                         ),
                       ],
                     ),

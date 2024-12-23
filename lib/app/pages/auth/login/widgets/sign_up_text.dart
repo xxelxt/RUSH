@@ -13,15 +13,15 @@ class SignUpText extends StatelessWidget {
       text: TextSpan(
         children: [
           TextSpan(
-            text: 'Don\'t have an account? ',
+            text: 'Chưa có tài khoản?',
             style: Theme.of(context).textTheme.bodySmall,
           ),
           TextSpan(
-            text: ' Sign Up',
+            text: 'Đăng ký',
             style: Theme.of(context).textTheme.bodySmall!.apply(
                   color: ColorsValue.primaryColor(context),
                 ),
-            recognizer: TapGestureRecognizer()
+            recognizer: TapGestureRecognizer() // Xử lý cử chỉ nhấn vào văn bản
               ..onTap = () {
                 NavigateRoute.toRegister(context: context);
               },

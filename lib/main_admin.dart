@@ -4,9 +4,12 @@ import 'package:rush/config/flavor_config.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'firebase_options.dart';
+import 'firebase_options_admin.dart';
 
-// flutter run --flavor admin -t .\lib\main_admin.dart
+// Config for FlutterFire: flutterfire config --project=rush-8753d --android-package-name=com.xxelxt.rush.admin
+// --out=lib/firebase_options_admin.dart --android-out=android/app/src/admin/google-services.json
+
+// flutter run --flavor admin -t .\lib\main_admin.dart -v
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

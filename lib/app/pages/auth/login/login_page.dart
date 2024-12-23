@@ -19,28 +19,30 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // Flavor
   FlavorConfig flavor = FlavorConfig.instance;
 
-  // Form Key (For validation)
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  // TextEditingController & FocusNode
+  // TextEditingController
   final TextEditingController _txtEmailAddress = TextEditingController();
   final TextEditingController _txtPassword = TextEditingController();
+
+  // FocusNode
   final FocusNode _fnEmailAddress = FocusNode();
   final FocusNode _fnPassword = FocusNode();
 
-  // Obsecure Text
+  // Trạng thái ẩn/hiện mật khẩu
   bool _obsecureText = true;
 
-  // Validation
+  // Instance của lớp ValidationType để xác thực
   ValidationType validation = ValidationType.instance;
 
+  // Giải phóng bộ nhớ
   @override
   void dispose() {
     _txtEmailAddress.dispose();
     _txtPassword.dispose();
+
     _fnEmailAddress.dispose();
     _fnPassword.dispose();
     super.dispose();
@@ -52,15 +54,12 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 16,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Logo must svg, so we can changed the color based on primaryColor
+                // Logo SVG
                 SvgPicture.asset(
                   'assets/images/logo.svg',
                   semanticsLabel: 'Logo',
@@ -71,29 +70,25 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // Title
+                // Tiêu đề
                 Text(
-                  'Log in to your Account',
+                  'Đăng nhập tài khoản RUSH',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
-                // Subtitle
                 Text(
-                  'Welcome back, please enter your details.',
+                  'Chào mừng bạn quay trở lại!',
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
 
-                // Form
+                // Form nhập thông tin
                 Form(
                   key: _formKey,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                      horizontal: 20,
-                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Input Email Address
+                        // Trường nhập email
                         TextFormField(
                           controller: _txtEmailAddress,
                           focusNode: _fnEmailAddress,
@@ -101,17 +96,17 @@ class _LoginPageState extends State<LoginPage> {
                           keyboardType: TextInputType.emailAddress,
                           onFieldSubmitted: (value) => FocusScope.of(context).requestFocus(_fnPassword),
                           decoration: const InputDecoration(
-                            hintText: 'Type your email address',
-                            labelText: 'Email Address',
+                            hintText: 'Nhập địa chỉ email của bạn',
+                            labelText: 'Địa chỉ email',
                           ),
                         ),
                         const SizedBox(height: 16),
 
-                        // Input Password
+                        // Trường nhập mật khẩu
                         TextFormField(
                           controller: _txtPassword,
                           focusNode: _fnPassword,
-                          obscureText: _obsecureText,
+                          obscureText: _obsecureText, // Ẩn/hiện mật khẩu
                           validator: validation.passwordValidation,
                           onFieldSubmitted: (value) => FocusScope.of(context).unfocus(),
                           decoration: InputDecoration(
@@ -119,30 +114,33 @@ class _LoginPageState extends State<LoginPage> {
                               icon: Icon(_obsecureText ? Icons.visibility_rounded : Icons.visibility_off_rounded),
                               onPressed: () {
                                 setState(() {
-                                  _obsecureText = !_obsecureText;
+                                  _obsecureText = !_obsecureText; // Chuyển trạng thái ẩn/hiện
                                 });
                               },
                             ),
-                            hintText: 'Type your password',
-                            labelText: 'Password',
+                            hintText: 'Nhập mật khẩu của bạn',
+                            labelText: 'Mật khẩu',
                           ),
                         ),
                         const SizedBox(height: 8),
+
+                        // Liên kết Quên mật khẩu
                         InkWell(
                           onTap: () {
-                            NavigateRoute.toForgotPassword(context: context);
+                            NavigateRoute.toForgotPassword(context: context); // Chuyển đến màn hình quên mật khẩu
                           },
                           child: Text(
-                            'Forgot Password?',
+                            'Quên mật khẩu?',
                             style: Theme.of(context).textTheme.bodySmall,
                             textAlign: TextAlign.end,
                           ),
                         ),
                         const SizedBox(height: 32),
 
-                        // Log In Button
+                        // Nút đăng nhập
                         Consumer<AuthProvider>(
                           builder: (context, value, child) {
+                            // Hiển thị vòng tròn tải nếu đang loading
                             if (value.isLoading) {
                               return const Center(
                                 child: CircularProgressIndicator(),
@@ -151,23 +149,24 @@ class _LoginPageState extends State<LoginPage> {
 
                             return ElevatedButton(
                               onPressed: () async {
-                                FocusScope.of(context).unfocus();
-                                // Check if the form valid
+                                FocusScope.of(context).unfocus(); // Ẩn bàn phím
+                                // Kiểm tra form hợp lệ
                                 if (_formKey.currentState!.validate() && !value.isLoading) {
                                   try {
                                     ScaffoldMessenger.of(context).removeCurrentMaterialBanner();
 
                                     await value
                                         .login(
-                                      emailAddress: _txtEmailAddress.text,
-                                      password: _txtPassword.text,
+                                      emailAddress: _txtEmailAddress.text, // Email nhập vào
+                                      password: _txtPassword.text, // Mật khẩu nhập vào
                                     )
                                         .then((e) {
+                                      // Kiểm tra quyền tài khoản
                                       if (!value.isRoleValid) {
-                                        _formKey.currentState!.reset();
+                                        _formKey.currentState!.reset(); // Reset form
 
                                         ScaffoldMessenger.of(context).showMaterialBanner(
-                                          errorBanner(context: context, msg: 'Your Account doesn\'t have the right permission'),
+                                          errorBanner(context: context, msg: 'Tài khoản của bạn không có quyền truy cập'),
                                         );
                                       }
                                     });
@@ -181,13 +180,13 @@ class _LoginPageState extends State<LoginPage> {
                                   }
                                 }
                               },
-                              child: const Text('Login'),
+                              child: const Text('Đăng nhập'),
                             );
                           },
                         ),
                         const SizedBox(height: 16),
 
-                        // Sign Up Text
+                        // Liên kết class SignUpText()
                         const SignUpText(),
                       ],
                     ),

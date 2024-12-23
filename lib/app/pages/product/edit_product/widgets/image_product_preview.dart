@@ -2,8 +2,14 @@ import 'package:flutter/material.dart';
 
 class ImageProductPreview extends StatelessWidget {
   final Widget image;
+
   final Function() onTap;
-  const ImageProductPreview({super.key, required this.image, required this.onTap});
+
+  const ImageProductPreview({
+    super.key,
+    required this.image,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +24,8 @@ class ImageProductPreview extends StatelessWidget {
               child: image,
             ),
           ),
+
+          // Nút xóa ở góc trên bên phải
           Positioned(
             top: 0,
             right: 0,

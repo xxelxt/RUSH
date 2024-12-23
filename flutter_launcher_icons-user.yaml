@@ -1,4 +1,3 @@
-# To Generate the launcher icon for user flavor run these commands in terminal root of this project:
 # flutter pub get
 # flutter pub run flutter_launcher_icons:main -f flutter_launcher_icons-user.yaml
 

@@ -1,16 +1,18 @@
 import 'package:rush/app/constants/colors_value.dart';
-
 import 'package:flutter/material.dart';
 
 class UserActionButton extends StatelessWidget {
   final Function() onTapFavorite;
+
   final void Function()? onTapAddToCart;
+
   final bool isWishlisted;
+
   const UserActionButton({
     super.key,
-    required this.onTapFavorite,
-    required this.onTapAddToCart,
-    this.isWishlisted = false,
+    required this.onTapFavorite, // Hàm xử lý khi nhấn nút yêu thích
+    required this.onTapAddToCart, // Hàm xử lý khi nhấn nút thêm vào giỏ hàng
+    this.isWishlisted = false, // Mặc định sản phẩm chưa được yêu thích
   });
 
   @override
@@ -22,11 +24,14 @@ class UserActionButton extends StatelessWidget {
       ),
       child: Row(
         children: [
+          // Nút yêu thích
           IconButton(
             onPressed: () {
-              onTapFavorite();
+              onTapFavorite(); // Gọi hàm xử lý khi nhấn nút
             },
-            icon: isWishlisted ? const Icon(Icons.favorite_rounded) : const Icon(Icons.favorite_border_rounded),
+            icon: isWishlisted
+                ? const Icon(Icons.favorite_rounded)
+                : const Icon(Icons.favorite_border_rounded),
             color: ColorsValue.primaryColor(context),
             style: IconButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -38,10 +43,14 @@ class UserActionButton extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 20.0),
+
+          // Nút Thêm vào giỏ hàng
           Expanded(
             child: ElevatedButton(
               onPressed: onTapAddToCart,
-              child: onTapAddToCart == null ? const Text('Out of Stock') : const Text('Add to Cart'),
+              child: onTapAddToCart == null
+                  ? const Text('Hết hàng')
+                  : const Text('Thêm vào giỏ hàng'),
             ),
           ),
         ],

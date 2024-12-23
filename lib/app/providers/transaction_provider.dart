@@ -12,6 +12,7 @@ import 'package:rush/core/domain/usecases/transaction/get_transaction.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+// Sử dụng `ChangeNotifier` để quản lý trạng thái và xử lý giao dịch
 class TransactionProvider with ChangeNotifier {
   final GetAccountTransaction getAccountTransaction;
   final GetTransaction getTransaction;
@@ -31,71 +32,79 @@ class TransactionProvider with ChangeNotifier {
     required this.getAccountProfile,
   });
 
-  // Loading State
-  bool _isLoading = true;
+  // Trạng thái tải dữ liệu
+  bool _isLoading = true; // Trạng thái chung
   bool get isLoading => _isLoading;
-  bool _isLoadingDetail = true;
+
+  bool _isLoadingDetail = true; // Trạng thái chi tiết giao dịch
   bool get isLoadingDetail => _isLoadingDetail;
 
-  // List Transaction
+  // Danh sách giao dịch
   List<Transaction> _listTransaction = [];
   List<Transaction> get listTransaction => _listTransaction;
 
-  // Detail Transaction
+  // Chi tiết giao dịch
   Transaction? _detailTransaction;
   Transaction? get detailTransaction => _detailTransaction;
 
-  // Count Items
+  // Đếm số lượng sản phẩm
   int _countItems = 0;
   int get countItems => _countItems;
 
+  // Tải danh sách giao dịch của tài khoản
   loadAccountTransaction({
     String search = '',
     OrderByEnum orderByEnum = OrderByEnum.newest,
   }) async {
     try {
-      _isLoading = true;
+      _isLoading = true; // Đặt trạng thái đang tải
       notifyListeners();
-      _listTransaction.clear();
+      _listTransaction.clear(); // Xoá danh sách cũ
 
-      String accountId = FirebaseAuth.instance.currentUser!.uid;
+      String accountId = FirebaseAuth.instance.currentUser!.uid; // Lấy ID tài khoản hiện tại
 
+      // Gọi usecase để lấy danh sách giao dịch
       var response = await getAccountTransaction.execute(accountId: accountId);
 
       if (response.isNotEmpty) {
-        _listTransaction = response;
-        sortList(orderByEnum);
+        _listTransaction = response; // Cập nhật danh sách
+        sortList(orderByEnum); // Sắp xếp danh sách
+
+        // Lọc danh sách theo từ khoá tìm kiếm
         if (search.isNotEmpty) {
           _listTransaction = _listTransaction
               .where(
                 (element) => element.purchasedProduct.any(
                   (cart) => cart.product!.productName.toLowerCase().contains(search.toLowerCase()),
-                ),
-              )
+            ),
+          )
               .toList();
         }
       }
 
-      _isLoading = false;
+      _isLoading = false; // Hoàn thành tải dữ liệu
       notifyListeners();
     } catch (e) {
-      _isLoading = false;
-      debugPrint('Load Account Transaction Error: ${e.toString()}');
+      _isLoading = false; // Dừng trạng thái tải khi lỗi xảy ra
+      debugPrint('Lỗi khi tải thanh toán: ${e.toString()}');
       notifyListeners();
     }
   }
 
+  // Tải chi tiết một giao dịch
   loadDetailTransaction({required String transactionId}) async {
     try {
       _isLoadingDetail = true;
       notifyListeners();
 
+      // Gọi usecase để lấy chi tiết giao dịch
       var response = await getTransaction.execute(transactionId: transactionId);
 
       if (response != null) {
-        _detailTransaction = response;
+        _detailTransaction = response; // Lưu thông tin chi tiết giao dịch
         _countItems = 0;
 
+        // Lấy thông tin tài khoản liên quan đến giao dịch (nếu là admin)
         if (FlavorConfig.isAdmin()) {
           if (_detailTransaction!.account == null) {
             var data = await getAccountProfile.execute(accountId: _detailTransaction!.accountId);
@@ -103,20 +112,22 @@ class TransactionProvider with ChangeNotifier {
           }
         }
 
+        // Đếm số lượng sản phẩm trong giao dịch
         for (var element in _detailTransaction!.purchasedProduct) {
           _countItems += element.quantity;
         }
       }
 
-      _isLoadingDetail = false;
+      _isLoadingDetail = false; // Hoàn thành tải chi tiết
       notifyListeners();
     } catch (e) {
-      _isLoadingDetail = false;
-      debugPrint('Load Detail Transaction Error: ${e.toString()}');
+      _isLoadingDetail = false; // Dừng trạng thái tải khi lỗi xảy ra
+      debugPrint('Lỗi khi tải chi tiết thanh toán hoá đơn: ${e.toString()}');
       notifyListeners();
     }
   }
 
+  // Tải tất cả giao dịch
   loadAllTransaction({
     String search = '',
     OrderByEnum orderByEnum = OrderByEnum.newest,
@@ -125,11 +136,13 @@ class TransactionProvider with ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
+      // Gọi usecase để lấy tất cả giao dịch
       var response = await getAllTransaction.execute();
 
       if (response.isNotEmpty) {
         _listTransaction = response;
 
+        // Lấy thông tin tài khoản liên quan đến từng giao dịch nếu chưa có
         await Future.forEach<Transaction>(_listTransaction, (element) async {
           if (element.account == null) {
             var data = await getAccountProfile.execute(accountId: element.accountId);
@@ -137,50 +150,56 @@ class TransactionProvider with ChangeNotifier {
           }
         });
 
-        sortList(orderByEnum);
+        sortList(orderByEnum); // Sắp xếp danh sách
+
+        // Lọc danh sách theo từ khoá tìm kiếm
         if (search.isNotEmpty) {
           _listTransaction = _listTransaction
               .where(
                 (element) => element.purchasedProduct.any(
                   (cart) => cart.product!.productName.toLowerCase().contains(search.toLowerCase()),
-                ),
-              )
+            ),
+          )
               .toList();
         }
       }
 
-      _isLoading = false;
+      _isLoading = false; // Hoàn thành tải dữ liệu
       notifyListeners();
     } catch (e) {
-      _isLoading = false;
-      debugPrint('Load Account Transaction Error: ${e.toString()}');
+      _isLoading = false; // Dừng trạng thái tải khi lỗi xảy ra
+      debugPrint('Lỗi khi tải thanh toán: ${e.toString()}');
       notifyListeners();
     }
   }
 
+  // Chấp nhận giao dịch
   accept() async {
     try {
       _isLoading = true;
       notifyListeners();
 
+      // Gọi usecase để chấp nhận giao dịch
       await acceptTransaction.execute(data: _detailTransaction!);
-      await loadDetailTransaction(transactionId: _detailTransaction!.transactionId);
-      loadAccountTransaction();
+      await loadDetailTransaction(transactionId: _detailTransaction!.transactionId); // Tải lại chi tiết giao dịch
+      loadAccountTransaction(); // Cập nhật danh sách giao dịch
 
       _isLoading = false;
       notifyListeners();
     } catch (e) {
-      _isLoading = false;
-      debugPrint('Accept Transaction Error: ${e.toString()}');
+      _isLoading = false; // Dừng trạng thái tải khi lỗi xảy ra
+      debugPrint('Lỗi thanh toán: ${e.toString()}');
       notifyListeners();
     }
   }
 
+  // Gửi đánh giá
   Future<void> submitReview({required String transactionId, required List<Review> data}) async {
     try {
       _isLoading = true;
       notifyListeners();
 
+      // Gửi đánh giá cho từng sản phẩm
       await Future.forEach(data, (Review review) async {
         await addReview.execute(
           transactionId: transactionId,
@@ -188,33 +207,37 @@ class TransactionProvider with ChangeNotifier {
         );
       });
 
+      // Cập nhật trạng thái giao dịch thành "đã đánh giá"
       await changeStatus(transactionID: transactionId, status: TransactionStatus.reviewed.value);
-      await loadDetailTransaction(transactionId: transactionId);
+      await loadDetailTransaction(transactionId: transactionId); // Tải lại chi tiết giao dịch
 
       _isLoading = false;
       notifyListeners();
     } catch (e) {
-      _isLoading = false;
-      debugPrint('Submit Review Error: ${e.toString()}');
+      _isLoading = false; // Dừng trạng thái tải khi lỗi xảy ra
+      debugPrint('Lỗi gửi đánh giá: ${e.toString()}');
       notifyListeners();
     }
   }
 
+  // Thay đổi trạng thái giao dịch
   changeStatus({required String transactionID, required int status}) async {
     try {
       _isLoadingDetail = true;
       notifyListeners();
 
+      // Gọi usecase để thay đổi trạng thái
       await changeTransactionStatus.execute(transactionID: transactionID, status: status);
-      await loadDetailTransaction(transactionId: transactionID);
-      loadAllTransaction();
+      await loadDetailTransaction(transactionId: transactionID); // Tải lại chi tiết giao dịch
+      loadAllTransaction(); // Cập nhật danh sách giao dịch
     } catch (e) {
       _isLoadingDetail = false;
-      debugPrint('Change Transaction Status Error: ${e.toString()}');
+      debugPrint('Lỗi cập nhật trạng thái đơn hàng: ${e.toString()}');
       notifyListeners();
     }
   }
 
+  // Sắp xếp danh sách giao dịch
   sortList(OrderByEnum data) {
     switch (data) {
       case OrderByEnum.newest:

@@ -1,5 +1,4 @@
 import 'package:rush/app/constants/colors_value.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -16,14 +15,12 @@ class ForgotPasswordPage extends StatefulWidget {
 }
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
-  // Form Key (For validation)
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  // TextEditingController & FocusNode
   final TextEditingController _txtEmailAddress = TextEditingController();
   final FocusNode _fnEmailAddress = FocusNode();
 
-  // Validation
+  // Instance của lớp ValidationType để xác thực
   ValidationType validation = ValidationType.instance;
 
   @override
@@ -38,7 +35,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Logo must svg, so we can changed the color based on primaryColor
+              // Logo SVG
               SvgPicture.asset(
                 'assets/images/logo.svg',
                 semanticsLabel: 'Logo',
@@ -49,21 +46,20 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               ),
               const SizedBox(height: 16),
 
-              // Title
+              // Tiêu đề
               Text(
-                'Forgot Password',
+                'Quên mật khẩu',
                 style: Theme.of(context).textTheme.titleLarge,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
-              // Subtitle
               Text(
-                'Don\'t worry! it happens. Please enter your email address we will send an email to reset your password',
+                'Vui lòng nhập địa chỉ email bạn đã đăng ký tài khoản. Chúng tôi sẽ gửi cho bạn email đặt lại mật khẩu.',
                 style: Theme.of(context).textTheme.titleSmall,
               ),
               const SizedBox(height: 32),
 
-              // Input Email Address
+              // Form nhập địa chỉ email
               Form(
                 key: _formKey,
                 child: TextFormField(
@@ -73,16 +69,17 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   keyboardType: TextInputType.emailAddress,
                   onFieldSubmitted: (value) => FocusScope.of(context).unfocus(),
                   decoration: const InputDecoration(
-                    hintText: 'Type your email address',
-                    labelText: 'Email Address',
+                    hintText: 'Nhập địa chỉ email của bạn',
+                    labelText: 'Địa chỉ email',
                   ),
                 ),
               ),
               const SizedBox(height: 32),
 
-              // Log In Button
+              // Nút đặt lại mật khẩu
               Consumer<AuthProvider>(
                 builder: (context, value, child) {
+                  // Hiển thị vòng tròn loading nếu đang xử lý
                   if (value.isLoading) {
                     return const Center(
                       child: CircularProgressIndicator(),
@@ -91,22 +88,23 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                   return ElevatedButton(
                     onPressed: () async {
-                      FocusScope.of(context).unfocus();
-                      // Check if the form valid
+                      FocusScope.of(context).unfocus(); // Ẩn bàn phím
+                      // Kiểm tra form hợp lệ
                       if (_formKey.currentState!.validate() && !value.isLoading) {
                         try {
                           ScaffoldMessenger.of(context).removeCurrentMaterialBanner();
 
+                          // Gửi yêu cầu đặt lại mật khẩu
                           await value
                               .resetPassword(
-                            email: _txtEmailAddress.text,
+                            email: _txtEmailAddress.text, // Email nhập vào
                           )
                               .whenComplete(() {
-                            _formKey.currentState!.reset();
+                            _formKey.currentState!.reset(); // Reset form
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Email Sent'),
+                                content: Text('Đã gửi email'),
                               ),
                             );
                           });
@@ -120,7 +118,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         }
                       }
                     },
-                    child: const Text('Reset Password'),
+                    child: const Text('Đặt lại mật khẩu'),
                   );
                 },
               ),

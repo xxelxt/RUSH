@@ -6,19 +6,16 @@ import 'package:flutter/material.dart';
 import '../themes/custom_input_decoration.dart';
 
 class AdminConfig implements RoleConfig {
-  // TODO: Change Admin App Name
   @override
   String appName() {
     return 'RUSH-ing';
   }
 
-  // TODO: Change App Primary Color
   @override
   Color primaryColor() {
     return const Color(0xFF288364);
   }
 
-  // TODO: Change App Primary Dark Color
   @override
   Color primaryDarkColor() {
     return const Color(0xFF4E9F3D);

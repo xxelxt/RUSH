@@ -8,7 +8,7 @@ enum Flavor {
   const Flavor(this.roleValue);
 
   @override
-  String toString() => "You logged in as ${name.toUpperCase()}";
+  String toString() => "Đã đăng nhập tài khoản ${name.toUpperCase()}";
 }
 
 class FlavorValues {

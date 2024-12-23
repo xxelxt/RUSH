@@ -1,10 +1,12 @@
 import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:http/http.dart' as http;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:rush/app/constants/validation_type.dart';
 import 'package:rush/utils/compress_image.dart';
 import 'widgets/image_product_preview.dart';
-
 import 'package:rush/app/providers/product_provider.dart';
 import 'package:rush/app/widgets/error_banner.dart';
 import 'package:rush/app/widgets/pick_image_source.dart';
@@ -25,10 +27,8 @@ class EditProductPage extends StatefulWidget {
 }
 
 class _EditProductPageState extends State<EditProductPage> {
-  // Product to Edit
   late Product dataProduct;
 
-  // Form Key (For validation)
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // TextEditingController
@@ -43,15 +43,45 @@ class _EditProductPageState extends State<EditProductPage> {
   final FocusNode _fnDescription = FocusNode();
   final FocusNode _fnStock = FocusNode();
 
-  // Images
+  // ImagePicker
   final ImagePicker _picker = ImagePicker();
-  final List<XFile> _productImages = [];
+  final List<XFile> _productImages = []; // Danh sách ảnh mới được chọn
 
-  // Validation
   ValidationType validation = ValidationType.instance;
+
+  Future<String> uploadImageToCloudinary(Uint8List imageBytes, String fileName) async {
+    const String cloudName = 'rush-elt';
+    const String uploadPreset = 'product_upload';
+
+    final Uri uri = Uri.parse('https://api.cloudinary.com/v1_1/$cloudName/image/upload');
+
+    // Tạo yêu cầu gửi ảnh
+    final request = http.MultipartRequest('POST', uri)
+      ..fields['upload_preset'] = uploadPreset
+      ..fields['folder'] = 'Products'
+      ..files.add(http.MultipartFile.fromBytes(
+        'file',
+        imageBytes,
+        filename: fileName,
+      ));
+
+    // Thực hiện gửi yêu cầu
+    final response = await request.send();
+
+    if (response.statusCode == 200) {
+      final responseBody = await http.Response.fromStream(response);
+      final responseData = json.decode(responseBody.body);
+
+      // Trả về URL của ảnh trên Cloudinary
+      return responseData['secure_url'];
+    } else {
+      throw Exception('Tải ảnh lên Cloudinary thất bại với mã lỗi ${response.statusCode}');
+    }
+  }
 
   @override
   void initState() {
+    // Lấy dữ liệu sản phẩm từ tham số truyền vào và khởi tạo các trường nhập liệu
     Future.microtask(() {
       setState(() {
         dataProduct = ModalRoute.of(context)!.settings.arguments as Product;
@@ -83,12 +113,12 @@ class _EditProductPageState extends State<EditProductPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Product'),
+        title: const Text('Cập nhật sản phẩm'),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Form
+          // Form nhập liệu
           Expanded(
             child: Form(
               key: _formKey,
@@ -100,7 +130,7 @@ class _EditProductPageState extends State<EditProductPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Input Product Name
+                    // Nhập tên sản phẩm
                     TextFormField(
                       controller: _txtProductName,
                       focusNode: _fnProductName,
@@ -108,13 +138,13 @@ class _EditProductPageState extends State<EditProductPage> {
                       keyboardType: TextInputType.name,
                       onFieldSubmitted: (value) => FocusScope.of(context).requestFocus(_fnPrice),
                       decoration: const InputDecoration(
-                        hintText: 'Type your product name',
-                        labelText: 'Product Name',
+                        hintText: 'Nhập tên sản phẩm',
+                        labelText: 'Tên sản phẩm',
                       ),
                     ),
                     const SizedBox(height: 16),
 
-                    // Input Price
+                    // Nhập giá sản phẩm
                     TextFormField(
                       controller: _txtPrice,
                       focusNode: _fnPrice,
@@ -122,13 +152,13 @@ class _EditProductPageState extends State<EditProductPage> {
                       keyboardType: TextInputType.number,
                       onFieldSubmitted: (value) => FocusScope.of(context).requestFocus(_fnDescription),
                       decoration: const InputDecoration(
-                        hintText: 'Type your product price',
-                        labelText: 'Product Price',
+                        hintText: 'Nhập giá của sản phẩm',
+                        labelText: 'Giá sản phẩm',
                       ),
                     ),
                     const SizedBox(height: 16),
 
-                    // Input Description
+                    // Nhập mô tả sản phẩm
                     TextFormField(
                       controller: _txtDescription,
                       focusNode: _fnDescription,
@@ -138,13 +168,13 @@ class _EditProductPageState extends State<EditProductPage> {
                       maxLines: 10,
                       onFieldSubmitted: (value) => FocusScope.of(context).requestFocus(_fnStock),
                       decoration: const InputDecoration(
-                        hintText: 'Type product description',
-                        labelText: 'Description',
+                        hintText: 'Nhập mô tả sản phẩm',
+                        labelText: 'Mô tả sản phẩm',
                       ),
                     ),
                     const SizedBox(height: 16),
 
-                    // Input Product Stock
+                    // Nhập số lượng sản phẩm
                     TextFormField(
                       controller: _txtStock,
                       focusNode: _fnStock,
@@ -156,19 +186,20 @@ class _EditProductPageState extends State<EditProductPage> {
                       ],
                       onFieldSubmitted: (value) => FocusScope.of(context).unfocus(),
                       decoration: const InputDecoration(
-                        hintText: 'Type your product stock',
-                        labelText: 'Stock',
+                        hintText: 'Nhập số lượng sản phẩm',
+                        labelText: 'Số lượng',
                       ),
                     ),
                     const SizedBox(height: 16),
 
-                    // Product Images
+                    // Khu vực quản lý ảnh sản phẩm
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Product Image'),
+                        const Text('Ảnh sản phẩm'),
                         TextButton(
                           onPressed: () async {
+                            // Chọn ảnh từ thư viện hoặc máy ảnh
                             int countImage = dataProduct.productImage.length;
                             countImage += _productImages.length;
                             if (_productImages.isNotEmpty && countImage >= 5) return;
@@ -189,66 +220,66 @@ class _EditProductPageState extends State<EditProductPage> {
                               }
                             }
                           },
-                          child: const Text('Add Image'),
+                          child: const Text('Thêm ảnh'),
                         ),
                       ],
                     ),
                     _productImages.isEmpty && (dataProduct.productImage.isEmpty)
                         ? Text(
-                            'Maximum 5 images',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          )
+                      'Tải lên tối đa 5 ảnh',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    )
                         : Wrap(
-                            children: [
-                              ...dataProduct.productImage.map(
-                                (e) => ImageProductPreview(
-                                  image: CachedNetworkImage(
-                                    imageUrl: e,
-                                    fit: BoxFit.cover,
-                                    width: 64,
-                                    height: 64,
-                                    progressIndicatorBuilder: (_, child, loadingProgress) {
-                                      return Center(
-                                        child: CircularProgressIndicator(
-                                          value: loadingProgress.progress,
-                                        ),
-                                      );
-                                    },
-                                    errorWidget: (context, error, stackTrace) {
-                                      return const Icon(Icons.error);
-                                    },
+                      children: [
+                        ...dataProduct.productImage.map(
+                              (e) => ImageProductPreview(
+                            image: CachedNetworkImage(
+                              imageUrl: e,
+                              fit: BoxFit.cover,
+                              width: 64,
+                              height: 64,
+                              progressIndicatorBuilder: (_, child, loadingProgress) {
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress.progress,
                                   ),
-                                  onTap: () {
-                                    setState(() {
-                                      dataProduct.productImage.remove(e);
-                                    });
-                                  },
-                                ),
-                              ),
-                              ..._productImages.map((e) {
-                                return ImageProductPreview(
-                                  image: Image.file(
-                                    File(e.path),
-                                    fit: BoxFit.cover,
-                                    width: 64,
-                                    height: 64,
-                                  ),
-                                  onTap: () {
-                                    setState(() {
-                                      _productImages.remove(e);
-                                    });
-                                  },
                                 );
-                              })
-                            ],
+                              },
+                              errorWidget: (context, error, stackTrace) {
+                                return const Icon(Icons.error);
+                              },
+                            ),
+                            onTap: () {
+                              setState(() {
+                                dataProduct.productImage.remove(e);
+                              });
+                            },
                           ),
+                        ),
+                        ..._productImages.map((e) {
+                          return ImageProductPreview(
+                            image: Image.file(
+                              File(e.path),
+                              fit: BoxFit.cover,
+                              width: 64,
+                              height: 64,
+                            ),
+                            onTap: () {
+                              setState(() {
+                                _productImages.remove(e);
+                              });
+                            },
+                          );
+                        })
+                      ],
+                    ),
                   ],
                 ),
               ),
             ),
           ),
 
-          // Add Product Button
+          // Nút cập nhật sản phẩm
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 20,
@@ -263,44 +294,44 @@ class _EditProductPageState extends State<EditProductPage> {
                 }
 
                 return ElevatedButton(
-                  child: const Text('Edit Product'),
+                  child: const Text('Cập nhật'),
                   onPressed: () async {
                     FocusScope.of(context).unfocus();
 
+                    // Kiểm tra nếu không có ảnh sản phẩm
                     if (_productImages.isEmpty && (dataProduct.productImage.length + _productImages.length) == 0) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('You must add at least 1 to 5 product images'),
+                          content: Text('Bạn phải thêm tối thiểu 1 ảnh và tối đa 5 ảnh sản phẩm'),
                         ),
                       );
                       return;
                     }
 
+                    // Xử lý nếu tất cả dữ liệu hợp lệ
                     if (_formKey.currentState!.validate() && !value.isLoading) {
                       try {
                         value.setLoading = true;
 
                         ScaffoldMessenger.of(context).removeCurrentMaterialBanner();
 
-                        List<String> productImage = [];
-
-                        productImage.addAll(dataProduct.productImage);
+                        List<String> productImage = [...dataProduct.productImage];
 
                         for (var element in _productImages) {
                           Uint8List image = await element.readAsBytes();
 
+                          // Nén ảnh
                           image = await CompressImage.startCompress(image);
-
-                          Reference ref = FirebaseStorage.instance.ref().child('Products/${element.name}');
-
-                          // Save the image to firebase storage
-                          final dataImage = await ref.putData(image);
-
-                          // Get the img url from Firebase Storage
-                          String imageUrl = await dataImage.ref.getDownloadURL();
-                          productImage.add(imageUrl);
+                          try {
+                            // Gửi ảnh lên Cloudinary
+                            String imageUrl = await uploadImageToCloudinary(image, element.name);
+                            productImage.add(imageUrl);
+                          } catch (e) {
+                            throw Exception('Lỗi khi tải ảnh lên Cloudinary: $e');
+                          }
                         }
 
+                        // Cập nhật thông tin sản phẩm
                         Product data = Product(
                           productId: dataProduct.productId,
                           productName: _txtProductName.text,
@@ -319,7 +350,7 @@ class _EditProductPageState extends State<EditProductPage> {
                           Navigator.of(context).pop();
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Product Edited Successfully'),
+                              content: Text('Cập nhật sản phẩm thành công'),
                             ),
                           );
                           value.loadDetailProduct(productId: data.productId);

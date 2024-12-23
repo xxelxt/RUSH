@@ -23,7 +23,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
   void initState() {
     Future.microtask(() {
       setState(() {
+        // Lấy địa chỉ mặc định từ tài khoản
         shippingAddress = context.read<AccountProvider>().account.primaryAddress;
+        // Cập nhật tổng hóa đơn dựa trên địa chỉ giao hàng
         context.read<CheckoutProvider>().updateTotalBill(shippingAddress: shippingAddress);
       });
     });
@@ -34,32 +36,33 @@ class _CheckoutPageState extends State<CheckoutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Checkout'),
+        title: const Text('Thanh toán'),
       ),
       body: Consumer<CheckoutProvider>(
         builder: (context, value, child) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 16,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Shipping Address
+                      // Chọn địa chỉ giao hàng
                       SelectShippingAddress(
-                        shippingAddress: shippingAddress,
+                        shippingAddress: shippingAddress, // Địa chỉ giao hàng hiện tại
                         selectAddress: () async {
+                          // Điều hướng đến màn hình quản lý địa chỉ
                           var result = await NavigateRoute.toManageAddress(context: context, returnAddress: true);
                           setState(() {
-                            shippingAddress = result;
+                            shippingAddress = result; // Cập nhật địa chỉ giao hàng
                             context.read<CheckoutProvider>().updateTotalBill(shippingAddress: shippingAddress);
                           });
                         },
+
+                        // Xóa địa chỉ giao hàng
                         removeAddress: () {
                           setState(() {
                             shippingAddress = null;
@@ -68,31 +71,31 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         },
                       ),
 
-                      // Purchased Product
+                      // Hiển thị danh sách sản phẩm đã mua
                       ...value.dataTransaction.purchasedProduct.map(
-                        (item) => CheckoutProductContainer(item: item),
+                            (item) => CheckoutProductContainer(item: item),
                       ),
                       const SizedBox(height: 8),
 
-                      // Subtotal
+                      // Tổng tiền hàng
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Subtotal',
+                            'Tổng tiền',
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           Text(
-                            value.dataTransaction.subTotal?.toCurrency() ?? '-',
+                            value.dataTransaction.subTotal?.toCurrency() ?? '-', // Hiển thị tổng tiền hàng
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ],
                       ),
                       const SizedBox(height: 16),
 
-                      // Order Summary
+                      // Tóm tắt đơn hàng
                       Text(
-                        'Order Summary',
+                        'Tóm tắt đơn hàng',
                         style: Theme.of(context).textTheme.labelLarge,
                       ),
                       const SizedBox(height: 8),
@@ -100,25 +103,25 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Total Price (${value.countItems} Items)',
+                            'Tổng giá trị (${value.countItems} sản phẩm)',
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           Text(
-                            value.dataTransaction.totalPrice?.toCurrency() ?? '-',
+                            value.dataTransaction.totalPrice?.toCurrency() ?? '-', // Tổng giá trị sản phẩm
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ],
                       ),
-                      if (shippingAddress != null)
+                      if (shippingAddress != null) // Nếu có địa chỉ giao hàng
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Shipping Fee',
+                              'Phí giao hàng',
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             Text(
-                              value.dataTransaction.shippingFee?.toCurrency() ?? '-',
+                              value.dataTransaction.shippingFee?.toCurrency() ?? '-', // Hiển thị phí giao hàng
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           ],
@@ -128,12 +131,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 ),
               ),
 
-              // Total Bill & Select Payment
+              // Tổng hóa đơn & nút chọn phương thức thanh toán
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 16,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -141,29 +141,31 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Total Bill',
+                          'Tổng giá trị đơn hàng',
                           style: Theme.of(context).textTheme.labelLarge,
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          value.dataTransaction.totalBill?.toCurrency() ?? '-',
+                          value.dataTransaction.totalBill?.toCurrency() ?? '-', // Tổng hóa đơn
                           style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                color: CustomColor.error,
-                              ),
+                            color: CustomColor.error,
+                          ),
                         ),
                       ],
                     ),
                     ElevatedButton(
                       onPressed: shippingAddress == null
-                          ? null
+                          ? null // Vô hiệu hóa nếu không có địa chỉ giao hàng
                           : () {
-                              value.dataTransaction.shippingAddress = shippingAddress;
-                              value.dataTransaction.totalPay =
-                                  value.dataTransaction.totalBill! + value.dataTransaction.serviceFee!;
+                        // Cập nhật địa chỉ giao hàng và tính tổng số tiền thanh toán
+                        value.dataTransaction.shippingAddress = shippingAddress;
+                        value.dataTransaction.totalPay =
+                            value.dataTransaction.totalBill! + value.dataTransaction.serviceFee!;
 
-                              NavigateRoute.toPayment(context: context);
-                            },
-                      child: const Text('Select Payment'),
+                        // Chuyển đến màn hình chọn phương thức thanh toán
+                        NavigateRoute.toPayment(context: context);
+                      },
+                      child: const Text('Lựa chọn phương thức thanh toán'),
                     ),
                   ],
                 ),

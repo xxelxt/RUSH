@@ -7,7 +7,13 @@ class TransactionProductContainer extends StatelessWidget {
   final Cart item;
   final int countOtherItems;
   final double totalPay;
-  const TransactionProductContainer({super.key, required this.item, required this.countOtherItems, required this.totalPay});
+
+  const TransactionProductContainer({
+    super.key,
+    required this.item,
+    required this.countOtherItems,
+    required this.totalPay,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +23,11 @@ class TransactionProductContainer extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Hiển thị ảnh sản phẩm
           ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: CachedNetworkImage(
-              imageUrl: item.product!.productImage.first,
+              imageUrl: item.product!.productImage.first, // Đường dẫn ảnh đầu tiên của sản phẩm
               width: 70,
               height: 70,
               fit: BoxFit.cover,
@@ -32,34 +39,44 @@ class TransactionProductContainer extends StatelessWidget {
                 );
               },
               errorWidget: (context, error, stackTrace) {
+                // Hiển thị biểu tượng lỗi khi không tải được ảnh
                 return const Icon(Icons.error);
               },
             ),
           ),
           const SizedBox(width: 12),
+
+          // Hiển thị thông tin sản phẩm
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Tên sản phẩm
               Text(
                 item.product!.productName,
                 style: Theme.of(context).textTheme.labelLarge,
-                overflow: TextOverflow.ellipsis,
+                overflow: TextOverflow.ellipsis, // Ẩn phần dư nếu văn bản quá dài.
               ),
+
+              // Số lượng sản phẩm
               Text(
-                '${item.quantity.toNumericFormat()} Items',
+                '${item.quantity.toNumericFormat()} sản phẩm',
                 style: Theme.of(context).textTheme.bodyMedium,
                 overflow: TextOverflow.ellipsis,
               ),
+
+              // Tổng tiền thanh toán
               Text(
-                'Total : ${totalPay.toCurrency()}',
+                'Tổng tiền: ${totalPay.toCurrency()}',
                 style: Theme.of(context).textTheme.labelLarge,
                 overflow: TextOverflow.ellipsis,
               ),
+
+              // Hiển thị số lượng các sản phẩm khác nếu có
               if (countOtherItems > 0)
                 Text(
-                  '+${countOtherItems.toNumericFormat()} Other Items',
+                  '+${countOtherItems.toNumericFormat()} sản phẩm khác',
                   style: Theme.of(context).textTheme.bodyMedium,
                   overflow: TextOverflow.ellipsis,
                 ),

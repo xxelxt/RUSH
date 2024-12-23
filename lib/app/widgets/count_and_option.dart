@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+// Hiển thị số lượng mục và nút sắp xếp/lọc
 class CountAndOption extends StatelessWidget {
   final int count;
   final String itemName;
   final bool isSort;
   final Function() onTap;
+
   const CountAndOption({
     super.key,
     required this.count,
@@ -23,32 +25,32 @@ class CountAndOption extends StatelessWidget {
           text: TextSpan(
             children: [
               TextSpan(
-                text: 'There are',
+                text: 'Có',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               TextSpan(
                 text: ' ' '$count $itemName',
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
               ),
             ],
           ),
         ),
+
+        // Hiển thị nút Sắp xếp hoặc Lọc
         isSort
             ? OutlinedButton.icon(
                 onPressed: () {
-                  onTap();
+                  onTap(); // Gọi hàm callback khi nhấn nút
                 },
                 icon: const Icon(Icons.sort_rounded),
-                label: const Text('Sort'),
+                label: const Text('Sắp xếp'),
               )
             : OutlinedButton.icon(
                 onPressed: () {
-                  onTap();
+                  onTap(); // Gọi hàm callback khi nhấn nút
                 },
                 icon: const Icon(Icons.filter_list_rounded),
-                label: const Text('Filter'),
+                label: const Text('Lọc'), // Nhãn nút
               ),
       ],
     );

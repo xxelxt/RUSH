@@ -21,101 +21,106 @@ class BottomNavigation extends StatefulWidget {
 }
 
 class _BottomNavigationState extends State<BottomNavigation> {
-  // Current Index of Navigation
   int _currentIndex = 0;
 
-  // Screen for navigation
+  // Danh sách màn hình tương ứng với các mục Navigation
   final List<Widget> _buildScreens = [];
 
-  // Navigation Item
+  // Danh sách các mục Navigation
   final List<NavigationDestination> _destinations = [];
 
-  // Flavor
   FlavorConfig flavor = FlavorConfig.instance;
 
   @override
   void initState() {
+    // Thêm mục "Trang chủ"
     _destinations.add(
       const NavigationDestination(
-        icon: Icon(Icons.home_outlined),
-        label: 'Home',
-        selectedIcon: Icon(Icons.home_rounded),
+        icon: Icon(Icons.home_outlined), // Icon khi chưa chọn
+        label: 'Trang chủ',
+        selectedIcon: Icon(Icons.home_rounded), // Icon khi được chọn
       ),
     );
-
     _buildScreens.add(const ListProductPage());
 
+    // Thêm các mục dành cho người dùng
     if (flavor.flavor == Flavor.user) {
       _destinations.addAll([
         const NavigationDestination(
           icon: Icon(Icons.favorite_outline_rounded),
-          label: 'Wishlist',
+          label: 'Yêu thích',
           selectedIcon: Icon(Icons.favorite_rounded),
         ),
         const NavigationDestination(
           icon: Icon(Icons.receipt_long_outlined),
-          label: 'Transaction',
+          label: 'Đơn hàng',
           selectedIcon: Icon(Icons.receipt_long_rounded),
         ),
       ]);
       _buildScreens.addAll([
-        const ListWishlistPage(),
-        const ListTransactionPage(),
+        const ListWishlistPage(), // Màn hình danh sách yêu thích
+        const ListTransactionPage(), // Màn hình danh sách đơn hàng
       ]);
     } else {
+
+      // Thêm các mục dành cho admin
       _destinations.addAll([
         const NavigationDestination(
           icon: Icon(Icons.receipt_long_outlined),
-          label: 'Transaction',
+          label: 'Đơn hàng',
           selectedIcon: Icon(Icons.receipt_long_rounded),
         ),
         const NavigationDestination(
           icon: Icon(Icons.group_outlined),
-          label: 'Customer',
+          label: 'Khách hàng',
           selectedIcon: Icon(Icons.group_rounded),
         ),
       ]);
       _buildScreens.addAll([
-        const ListTransactionPage(),
-        const ListCustomerPage(),
+        const ListTransactionPage(), // Màn hình danh sách đơn hàng
+        const ListCustomerPage(), // Màn hình danh sách khách hàng
       ]);
     }
 
+    // Thêm mục "Tài khoản"
     _buildScreens.add(const ProfilePage());
     _destinations.add(
       const NavigationDestination(
         icon: Icon(Icons.person_outline),
-        label: 'Profile',
+        label: 'Tài khoản',
         selectedIcon: Icon(Icons.person_rounded),
       ),
     );
 
-    Future.microtask(
-      () {
-        String accountId = FirebaseAuth.instance.currentUser!.uid;
-        context.read<ProductProvider>().loadListProduct();
-        context.read<CartProvider>().getCart(accountId: accountId);
-        if (flavor.flavor == Flavor.user) {
-          context.read<WishlistProvider>().loadWishlist(accountId: accountId);
-          context.read<TransactionProvider>().loadAccountTransaction();
-        } else {
-          context.read<TransactionProvider>().loadAllTransaction();
-          context.read<AccountProvider>().getListAccount();
-        }
-        context.read<AccountProvider>().getProfile();
-      },
-    );
+    // Tải dữ liệu cần thiết khi khởi tạo
+    Future.microtask(() {
+      String accountId = FirebaseAuth.instance.currentUser!.uid; // Lấy ID người dùng hiện tại
+      context.read<ProductProvider>().loadListProduct(); // Tải danh sách sản phẩm
+      context.read<CartProvider>().getCart(accountId: accountId); // Tải giỏ hàng
+      if (flavor.flavor == Flavor.user) {
+        // Dành cho người dùng
+        context.read<WishlistProvider>().loadWishlist(accountId: accountId); // Tải danh sách yêu thích
+        context.read<TransactionProvider>().loadAccountTransaction(); // Tải giao dịch của tài khoản
+      } else {
+        // Dành cho admin
+        context.read<TransactionProvider>().loadAllTransaction(); // Tải tất cả giao dịch
+        context.read<AccountProvider>().getListAccount(); // Tải danh sách tài khoản
+      }
+      context.read<AccountProvider>().getProfile(); // Tải hồ sơ cá nhân
+    });
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _buildScreens[_currentIndex],
+      body: _buildScreens[_currentIndex], // Hiển thị màn hình tương ứng với mục đã chọn
       bottomNavigationBar: NavigationBar(
-        destinations: _destinations,
-        selectedIndex: _currentIndex,
+        destinations: _destinations, // Danh sách các mục Navigation
+        selectedIndex: _currentIndex, // Chỉ số mục hiện tại
         onDestinationSelected: (int index) {
+          // Thay đổi màn hình khi chọn mục khác
           setState(() {
             _currentIndex = index;
           });
