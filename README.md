@@ -10,7 +10,7 @@
 
 | Họ và tên              | Mã sinh viên | 🔗 Link to GitHub profile                         |
 | ---------------------- | ------------ | ------------------------------------------------- |
-| Phạm Ngọc Nghiệp       | 24A4042603   | [xxelxt](https://github.com/xxelxt)               |
+| Phạm Ngọc Nghiệp 🌟    | 24A4042603   | [xxelxt](https://github.com/xxelxt)               |
 | Bùi Phương Linh        | 25A4041557   | [bphglinh374](https://github.com/bphglinh374)     |
 | Lê Phương Linh         | 25A4041893   | [Bamboo-rat](https://github.com/Bamboo-rat)       |
 | Đàm Thị Huyền Trang    | 25A4041962   | [Damhuyentrang](https://github.com/Damhuyentrang) |'
@@ -54,29 +54,32 @@
 <details>
 <summary>Click để mở rộng</summary>
 
-| **Package**                  | **Version**    | **Mục đích sử dụng**                                             |
-|------------------------------|----------------|------------------------------------------------------------------|
-| `json_annotation`            | `^4.8.1`       | Chú thích dữ liệu JSON cho các lớp Dart                          |
-| `json_serializable`          | `^6.7.1`       | Tự động tạo mã để chuyển đổi giữa đối tượng Dart và JSON         |
-| `firebase_core`              | `^2.28.0`      | Cấu hình Firebase cơ bản                                         |
-| `cloud_firestore`            | `^4.16.0`      | Tương tác với Firestore Database                                 |
-| `firebase_auth`              | `^4.19.0`      | Cung cấp các chức năng authenticate cho người dùng Firebase      |
-| `firebase_storage`           | `^11.7.0`      | Lưu trữ và quản lý các tệp trong Firebase Storage                |
-| `get_it`                     | `^7.6.8`       | Dependency injection và state management                         |
-| `flutter_launcher_icons`     | `^0.13.1`      | Tạo icon cho ứng dụng Flutter                                    |
-| `flutter_svg`                | `^2.0.10+1`    | Hiển thị các tệp SVG                                             |
-| `google_fonts`               | `^6.2.1`       | Sử dụng các font chữ từ Google Fonts                             |
-| `provider`                   | `^6.1.2`       | Quản lý trạng thái (State management)                            |
-| `intl`                       | `^0.19.0`      | Xử lý định dạng số, ngày giờ và quốc tế hóa                      |
-| `image_picker`               | `^1.0.7`       | Chọn ảnh từ thư viện/chụp ảnh bằng camera                        |
-| `timeago`                    | `^3.6.1`       | Hiển thị thời gian theo định dạng tương đối (ex: "3 giờ trước")  |
-| `shared_preferences`         | `^2.2.2`       | Lưu trữ và truy xuất dữ liệu đơn giản trên thiết bị              |
-| `url_launcher`               | `^6.2.5`       | Mở URL, email, hoặc số điện thoại trên ứng dụng khác             |
-| `badges`                     | `^3.1.2`       | Hiển thị huy hiệu (badge) cho widget                             |
-| `equatable`                  | `^2.0.5`       | So sánh các đối tượng (sử dụng trong state management)           |
-| `flutter_image_compress`     | `^2.2.0`       | Nén hình ảnh để giảm kích thước tệp                              |
-| `cached_network_image`       | `^3.3.1`       | Hiển thị hình ảnh từ mạng với bộ nhớ đệm                         |
-| `flutter_lints`              | `^3.0.2`       | Cung cấp bộ quy tắc lint cho mã nguồn Flutter                    |
-| `build_runner`               | `^2.4.9`       | Tạo mã tự động (dùng với `json_serializable`)                    |
+| **Package**                  | **Version**    | **Mục đích sử dụng**                                               |
+|------------------------------|----------------|--------------------------------------------------------------------|
+| `badges`                     | `^3.1.2`       | Hiển thị huy hiệu (badge) cho widget                               |
+| `build_runner`               | `^2.4.9`       | Tạo mã tự động (dùng với `json_serializable`)                      |
+| `cached_network_image`       | `^3.3.1`       | Hiển thị hình ảnh từ mạng với bộ nhớ đệm                           |
+| `cloud_firestore`            | `^4.16.0`      | Tương tác với Firestore Database                                   |
+| `cloudinary_flutter`         | `^1.3.0`       | Tương tác với Cloudinary để quản lý và xử lý ảnh/video             |
+| `cloudinary_url_gen`         | `^1.6.0`       | Tạo URL động để quản lý hình ảnh và video trên Cloudinary          |
+| `equatable`                  | `^2.0.5`       | So sánh các đối tượng (sử dụng trong state management)             |
+| `firebase_auth`              | `^4.19.0`      | Cung cấp các chức năng authenticate cho người dùng Firebase        |
+| `firebase_core`              | `^2.28.0`      | Cấu hình Firebase cơ bản                                           |
+| `flutter_image_compress`     | `^2.2.0`       | Nén hình ảnh để giảm kích thước tệp                                |
+| `flutter_launcher_icons`     | `^0.13.1`      | Tạo icon cho ứng dụng Flutter                                      |
+| `flutter_lints`              | `^3.0.2`       | Cung cấp bộ quy tắc lint cho mã nguồn Flutter                      |
+| ~~`firebase_storage`~~       | ~~`^11.7.0`~~  | ~~Lưu trữ và quản lý các tệp trong Firebase Storage~~              |
+| `flutter_svg`                | `^2.0.10+1`    | Hiển thị các tệp SVG                                               |
+| `get_it`                     | `^7.6.8`       | Dependency injection và state management                           |
+| `google_fonts`               | `^6.2.1`       | Sử dụng các font chữ từ Google Fonts                               |
+| `http`                       | `^1.1.0`       | Gửi và nhận các yêu cầu HTTP                                       |
+| `image_picker`               | `^1.0.7`       | Chọn ảnh từ thư viện/chụp ảnh bằng camera                          |
+| `intl`                       | `^0.19.0`      | Xử lý định dạng số, ngày giờ và quốc tế hóa                        |
+| `json_annotation`            | `^4.8.1`       | Chú thích dữ liệu JSON cho các lớp Dart                            |
+| `json_serializable`          | `^6.7.1`       | Tự động tạo mã để chuyển đổi giữa đối tượng Dart và JSON           |
+| `provider`                   | `^6.1.2`       | Quản lý trạng thái (State management)                              |
+| `shared_preferences`         | `^2.2.2`       | Lưu trữ và truy xuất dữ liệu đơn giản trên thiết bị                |
+| `timeago`                    | `^3.6.1`       | Hiển thị thời gian tương đối (*ex: "3 giờ trước"*)                 |
+| `url_launcher`               | `^6.2.5`       | Mở URL, email hoặc số điện thoại trên ứng dụng khác                |
 
 </details>
