@@ -84,7 +84,7 @@ class _DetailProductPageState extends State<DetailProductPage> {
                     horizontal: 20,
                   ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch, // Stretch all Containers
                     children: [
                       // Danh sách ảnh sản phẩm
                       SingleChildScrollView(
@@ -92,77 +92,137 @@ class _DetailProductPageState extends State<DetailProductPage> {
                         child: Row(
                           children: [
                             ...value.detailProduct!.productImage.map((imgUrl) {
-                              int index = value.detailProduct!.productImage
-                                  .indexOf(imgUrl);
-                              return DetailProductImageCard(
-                                  imgUrl: imgUrl, index: index);
+                              int index = value.detailProduct!.productImage.indexOf(imgUrl);
+                              return DetailProductImageCard(imgUrl: imgUrl, index: index);
                             })
                           ],
                         ),
                       ),
                       const SizedBox(height: 16),
 
-                      // Tên sản phẩm và giá
-                      DetailTextSpaceBetween(
-                        leftText: value.detailProduct!.productName,
-                        rightText: NumberFormat.currency(
-                            locale: 'vi_VN', symbol: 'đ')
-                            .format(value.detailProduct!.productPrice),
-                      ),
-                      const SizedBox(height: 12),
-
-                      // Số lượng còn trong kho
-                      DetailTextSpaceBetween(
-                        leftText: 'Số lượng hàng còn',
-                        rightText: value.detailProduct!.stock.toNumericFormat(),
-                      ),
-                      const SizedBox(height: 12),
-
-                      // Mô tả sản phẩm
-                      Text(
-                        'Mô tả sản phẩm',
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          fontWeight: FontWeight.bold,
+                      // Tên sản phẩm và giá (Container bo tròn)
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.all(16),
+                        child: DetailTextSpaceBetween(
+                          leftText: value.detailProduct!.productName,
+                          rightText: NumberFormat.currency(locale: 'vi_VN', symbol: 'đ')
+                              .format(value.detailProduct!.productPrice),
                         ),
                       ),
-                      const SizedBox(height: 4.0),
-                      Text(
-                        value.detailProduct!.productDescription,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
 
-                      // Đánh giá và nhận xét
-                      DetailRatingReview(
-                        rating: value.detailProduct!.rating,
-                        totalReview: value.detailProduct!.totalReviews,
-                        onTapSeeAll: () {
-                          // Điều hướng đến trang tất cả nhận xét
-                          NavigateRoute.toProductReview(
-                              context: context,
-                              productReview: value.listProductReview);
-                        },
+                      // Số lượng còn trong kho (Container bo tròn)
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.all(16),
+                        child: DetailTextSpaceBetween(
+                          leftText: 'Số lượng hàng còn',
+                          rightText: value.detailProduct!.stock.toNumericFormat(),
+                        ),
                       ),
                       const SizedBox(height: 12),
 
-                      // Danh sách review (nếu có)
-                      if (value.listProductReview.isEmpty)
-                        Center(
-                          child: Text(
-                            'Chưa có đánh giá cho sản phẩm này',
-                            style: Theme.of(context).textTheme.bodySmall,
-                            textAlign: TextAlign.center,
-                          ),
+                      // Mô tả sản phẩm (Container bo tròn với cùng độ rộng)
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
                         ),
-
-                      if (value.listProductReview.isNotEmpty)
-                        Column(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            ...value.listProductReview.map((item) {
-                              return ProductReviewCard(item: item);
-                            })
+                            Text(
+                              'Mô tả sản phẩm',
+                              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4.0),
+                            Text(
+                              value.detailProduct!.productDescription,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
                           ],
                         ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Đánh giá và nhận xét (Container bo tròn)
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            DetailRatingReview(
+                              rating: value.detailProduct!.rating,
+                              totalReview: value.detailProduct!.totalReviews,
+                              onTapSeeAll: () {
+                                NavigateRoute.toProductReview(
+                                    context: context, productReview: value.listProductReview);
+                              },
+                            ),
+                            const SizedBox(height: 12),
+
+                            if (value.listProductReview.isEmpty)
+                              Center(
+                                child: Text(
+                                  'Chưa có đánh giá cho sản phẩm này',
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+
+                            if (value.listProductReview.isNotEmpty)
+                              Column(
+                                children: [
+                                  ...value.listProductReview.map((item) {
+                                    return ProductReviewCard(item: item);
+                                  })
+                                ],
+                              ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
