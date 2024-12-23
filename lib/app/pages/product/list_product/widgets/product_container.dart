@@ -79,7 +79,7 @@ class ProductContainer extends StatelessWidget {
                 Text(
                   '${item.rating}' // Số điểm đánh giá
                       ' '
-                      '(${item.totalReviews} Reviews)', // Số lượt đánh giá
+                      '(${item.totalReviews} đánh giá)', // Số lượt đánh giá
                 ),
               ],
             ),

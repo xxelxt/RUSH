@@ -94,7 +94,7 @@ class RadioCard<T> extends StatelessWidget {
                     child: const Text('Xoá'),
                   ),
                   const SizedBox(width: 12),
-                  ElevatedButton(
+                  OutlinedButton(
                     onPressed: onEdit, // Callback khi nhấn nút chỉnh sửa
                     child: const Text('Chỉnh sửa'),
                   )

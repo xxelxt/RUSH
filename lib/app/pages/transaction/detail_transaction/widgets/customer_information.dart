@@ -60,7 +60,7 @@ class CustomerInformation extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             Text(
-              customer.phoneNumber.separateCountryCode(),
+              customer.phoneNumber.formatPhoneNumber(),
               style: Theme.of(context).textTheme.labelLarge,
             ),
           ],

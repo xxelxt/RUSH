@@ -12,12 +12,12 @@ class UserConfig implements RoleConfig {
 
   @override
   Color primaryColor() {
-    return const Color(0xFF00704A);
+    return const Color(0xFF634832);
   }
 
   @override
   Color primaryDarkColor() {
-    return const Color(0xFF4E9F3D);
+    return const Color(0xFF967259);
   }
 
   @override

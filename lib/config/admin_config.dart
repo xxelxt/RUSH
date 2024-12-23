@@ -13,12 +13,12 @@ class AdminConfig implements RoleConfig {
 
   @override
   Color primaryColor() {
-    return const Color(0xFF288364);
+    return const Color(0xFF634832);
   }
 
   @override
   Color primaryDarkColor() {
-    return const Color(0xFF4E9F3D);
+    return const Color(0xFF967259);
   }
 
   @override

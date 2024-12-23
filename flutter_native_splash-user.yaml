@@ -1,0 +1,11 @@
+# flutter pub run flutter_native_splash:create --flavor user
+
+flutter_native_splash:
+  android: true
+  ios: false
+  web: false
+  color: "#493628"
+  image: assets/launcher_icons/icon-user.png
+  fullscreen: true
+  android_gravity: center
+  ios_content_mode: center

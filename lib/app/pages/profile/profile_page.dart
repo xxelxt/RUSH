@@ -111,7 +111,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   // Hiển thị và chỉnh sửa số điện thoại
                   PersonalInfoTile(
                     personalInfo: 'Số điện thoại',
-                    value: value.account.phoneNumber.separateCountryCode(),
+                    value: value.account.phoneNumber.formatPhoneNumber(),
                     onTap: () {
                       showDialog(
                         context: context,

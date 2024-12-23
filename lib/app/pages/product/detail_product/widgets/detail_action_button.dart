@@ -26,7 +26,7 @@ class DetailActionButton extends StatelessWidget {
               onPressed: () {
                 onTapDeleteProduct(); // Gọi hàm xử lý khi nhấn nút
               },
-              child: const Text('Xoá sản phẩm'),
+              child: const Text('Xoá'),
             ),
           ),
           const SizedBox(width: 32.0),
@@ -37,7 +37,7 @@ class DetailActionButton extends StatelessWidget {
               onPressed: () {
                 onTapEditProduct(); // Gọi hàm xử lý khi nhấn nút
               },
-              child: const Text('Cập nhật sản phẩm'),
+              child: const Text('Cập nhật'),
             ),
           ),
         ],

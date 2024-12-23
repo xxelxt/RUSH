@@ -13,7 +13,7 @@ class SignUpText extends StatelessWidget {
       text: TextSpan(
         children: [
           TextSpan(
-            text: 'Chưa có tài khoản?',
+            text: 'Chưa có tài khoản? ',
             style: Theme.of(context).textTheme.bodySmall,
           ),
           TextSpan(

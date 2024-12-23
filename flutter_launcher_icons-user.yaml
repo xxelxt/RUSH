@@ -1,7 +1,6 @@
-# flutter pub get
 # flutter pub run flutter_launcher_icons:main -f flutter_launcher_icons-user.yaml
 
-flutter_icons:
+flutter_launcher_icons:
   android: true
-  ios: true
+  ios: false
   image_path: "assets/launcher_icons/icon-user.png" # TODO: Change this file with your icon

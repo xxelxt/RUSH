@@ -1,0 +1,11 @@
+# flutter pub run flutter_native_splash:create --flavor admin
+
+flutter_native_splash:
+  android: true
+  ios: false
+  web: false
+  color: "#E4D6CE"
+  image: assets/launcher_icons/icon-admin.png
+  fullscreen: true
+  android_gravity: center
+  ios_content_mode: center

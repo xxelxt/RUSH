@@ -44,7 +44,7 @@ class CustomerContainer extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  customer.phoneNumber.separateCountryCode(),
+                  customer.phoneNumber.formatPhoneNumber(),
                   style: Theme.of(context).textTheme.bodyMedium,
                   overflow: TextOverflow.ellipsis,
                 ),

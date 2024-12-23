@@ -57,9 +57,9 @@ class _DetailProductPageState extends State<DetailProductPage> {
         // Hiển thị biểu tượng giỏ hàng nếu là user
         actions: _flavorConfig.flavor == Flavor.user
             ? [
-                const CartBadge(),
-                const SizedBox(width: 32),
-              ]
+          const CartBadge(),
+          const SizedBox(width: 32),
+        ]
             : null,
       ),
 
@@ -106,14 +106,14 @@ class _DetailProductPageState extends State<DetailProductPage> {
                       DetailTextSpaceBetween(
                         leftText: value.detailProduct!.productName,
                         rightText: NumberFormat.currency(
-                                locale: 'vi_VN', symbol: 'đ')
+                            locale: 'vi_VN', symbol: 'đ')
                             .format(value.detailProduct!.productPrice),
                       ),
                       const SizedBox(height: 12),
 
                       // Số lượng còn trong kho
                       DetailTextSpaceBetween(
-                        leftText: 'Số lượng còn trong kho',
+                        leftText: 'Số lượng hàng còn',
                         rightText: value.detailProduct!.stock.toNumericFormat(),
                       ),
                       const SizedBox(height: 12),
@@ -122,8 +122,8 @@ class _DetailProductPageState extends State<DetailProductPage> {
                       Text(
                         'Mô tả sản phẩm',
                         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 4.0),
                       Text(
@@ -171,138 +171,138 @@ class _DetailProductPageState extends State<DetailProductPage> {
               // Phần nút hành động
               _flavorConfig.flavor == Flavor.user
                   ? Consumer2<CartProvider, WishlistProvider>(
-                      builder:
-                          (context, cartProvider, wishlistProvider, child) {
-                        if (cartProvider.isLoading ||
-                            wishlistProvider.isLoading) {
-                          return const Center(
-                            child: Padding(
-                              padding: EdgeInsets.only(bottom: 16.0),
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
+                builder:
+                    (context, cartProvider, wishlistProvider, child) {
+                  if (cartProvider.isLoading ||
+                      wishlistProvider.isLoading) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 16.0),
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+
+                  // Kiểm tra sản phẩm có trong danh sách yêu thích hay không
+                  bool isWishlisted = wishlistProvider.listWishlist.any(
+                          (element) =>
+                      element.productId ==
+                          value.detailProduct!.productId);
+
+                  return UserActionButton(
+                    isWishlisted: isWishlisted,
+                    // Xử lý thêm hoặc xóa sản phẩm khỏi danh sách yêu thích
+                    onTapFavorite: () async {
+                      if (isWishlisted) {
+                        String wishlistId = wishlistProvider.listWishlist
+                            .where((element) =>
+                        element.productId ==
+                            value.detailProduct!.productId)
+                            .first
+                            .wishlistId;
+                        await wishlistProvider.delete(
+                            accountId: accountId, wishlistId: wishlistId);
+                        return;
+                      }
+
+                      var data = Wishlist(
+                        wishlistId: ''.generateUID(),
+                        productId: value.detailProduct!.productId,
+                        createdAt: DateTime.now(),
+                        updatedAt: DateTime.now(),
+                      );
+
+                      await wishlistProvider.add(
+                          accountId: accountId, data: data);
+                    },
+
+                    // Xử lý thêm sản phẩm vào giỏ hàng
+                    onTapAddToCart: value.detailProduct!.stock == 0
+                        ? null
+                        : () async {
+                      String accountId =
+                          FirebaseAuth.instance.currentUser!.uid;
+
+                      // Kiểm tra sản phẩm đã có trong giỏ hàng chưa
+                      if (cartProvider.countCart != 0) {
+                        for (var element in cartProvider.listCart) {
+                          if (element.productId ==
+                              value.detailProduct!.productId) {
+                            Cart data = element;
+                            data.quantity += 1;
+                            data.total =
+                                data.product!.productPrice *
+                                    data.quantity;
+                            await cartProvider.updateCart(
+                                data: data);
+                            return;
+                          }
                         }
+                      }
 
-                        // Kiểm tra sản phẩm có trong danh sách yêu thích hay không
-                        bool isWishlisted = wishlistProvider.listWishlist.any(
-                            (element) =>
-                                element.productId ==
-                                value.detailProduct!.productId);
+                      // Thêm sản phẩm mới vào giỏ hàng
+                      Cart data = Cart(
+                        cartId: ''.generateUID(),
+                        product: value.detailProduct,
+                        productId: value.detailProduct!.productId,
+                        quantity: 1,
+                        total: value.detailProduct!.productPrice,
+                        createdAt: DateTime.now(),
+                        updatedAt: DateTime.now(),
+                      );
+                      await cartProvider.addCart(
+                          accountId: accountId, data: data);
+                    },
+                  );
+                },
+              )
 
-                        return UserActionButton(
-                          isWishlisted: isWishlisted,
-                          // Xử lý thêm hoặc xóa sản phẩm khỏi danh sách yêu thích
-                          onTapFavorite: () async {
-                            if (isWishlisted) {
-                              String wishlistId = wishlistProvider.listWishlist
-                                  .where((element) =>
-                                      element.productId ==
-                                      value.detailProduct!.productId)
-                                  .first
-                                  .wishlistId;
-                              await wishlistProvider.delete(
-                                  accountId: accountId, wishlistId: wishlistId);
-                              return;
-                            }
-
-                            var data = Wishlist(
-                              wishlistId: ''.generateUID(),
-                              productId: value.detailProduct!.productId,
-                              createdAt: DateTime.now(),
-                              updatedAt: DateTime.now(),
-                            );
-
-                            await wishlistProvider.add(
-                                accountId: accountId, data: data);
-                          },
-
-                          // Xử lý thêm sản phẩm vào giỏ hàng
-                          onTapAddToCart: value.detailProduct!.stock == 0
-                              ? null
-                              : () async {
-                                  String accountId =
-                                      FirebaseAuth.instance.currentUser!.uid;
-
-                                  // Kiểm tra sản phẩm đã có trong giỏ hàng chưa
-                                  if (cartProvider.countCart != 0) {
-                                    for (var element in cartProvider.listCart) {
-                                      if (element.productId ==
-                                          value.detailProduct!.productId) {
-                                        Cart data = element;
-                                        data.quantity += 1;
-                                        data.total =
-                                            data.product!.productPrice *
-                                                data.quantity;
-                                        await cartProvider.updateCart(
-                                            data: data);
-                                        return;
-                                      }
-                                    }
-                                  }
-
-                                  // Thêm sản phẩm mới vào giỏ hàng
-                                  Cart data = Cart(
-                                    cartId: ''.generateUID(),
-                                    product: value.detailProduct,
-                                    productId: value.detailProduct!.productId,
-                                    quantity: 1,
-                                    total: value.detailProduct!.productPrice,
-                                    createdAt: DateTime.now(),
-                                    updatedAt: DateTime.now(),
-                                  );
-                                  await cartProvider.addCart(
-                                      accountId: accountId, data: data);
-                                },
-                        );
-                      },
-                    )
-
-                  // Nút hành động của admin
+              // Nút hành động của admin
                   : DetailActionButton(
-                      onTapDeleteProduct: () async {
-                        var response = await showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text('Xoá sản phẩm này?'),
-                              content: const Text(
-                                  'Thông tin về sản phẩm sẽ bị xoá vĩnh viễn'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.of(context).pop(),
-                                  child: const Text('Huỷ'),
-                                ),
-                                TextButton(
-                                  onPressed: () =>
-                                      Navigator.of(context).pop(true),
-                                  child: const Text('Xoá'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                onTapDeleteProduct: () async {
+                  var response = await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Xoá sản phẩm này?'),
+                        content: const Text(
+                            'Thông tin về sản phẩm sẽ bị xoá vĩnh viễn'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('Huỷ'),
+                          ),
+                          TextButton(
+                            onPressed: () =>
+                                Navigator.of(context).pop(true),
+                            child: const Text('Xoá'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
 
-                        if (response != null) {
-                          await value
-                              .delete(productId: value.detailProduct!.productId)
-                              .whenComplete(() {
-                            Navigator.of(context).pop();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Xoá sản phẩm thành công'),
-                              ),
-                            );
-                            value.loadListProduct();
-                          });
-                        }
-                      },
+                  if (response != null) {
+                    await value
+                        .delete(productId: value.detailProduct!.productId)
+                        .whenComplete(() {
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Xoá sản phẩm thành công'),
+                        ),
+                      );
+                      value.loadListProduct();
+                    });
+                  }
+                },
 
-                      // Chuyển đến trang chỉnh sửa sản phẩm
-                      onTapEditProduct: () {
-                        NavigateRoute.toEditProduct(
-                            context: context, product: value.detailProduct!);
-                      },
-                    ),
+                // Chuyển đến trang chỉnh sửa sản phẩm
+                onTapEditProduct: () {
+                  NavigateRoute.toEditProduct(
+                      context: context, product: value.detailProduct!);
+                },
+              ),
             ],
           );
         },

@@ -6,7 +6,7 @@ import '../app/constants/country_code.dart';
 extension StringExtension on String {
   // Tạo mã UID ngẫu nhiên gồm 20 ký tự
   String generateUID() {
-    const int length = 20;
+    const int length = 15;
     const String alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
     const int maxRandom = alphabet.length;
@@ -46,24 +46,29 @@ extension StringExtension on String {
   }
 
   // Tách mã quốc gia và số điện thoại
-  String separateCountryCode() {
+  String formatPhoneNumber() {
     String phoneNumber = '';
-    String countryCode = '';
 
-    // Duyệt qua danh sách mã quốc gia
-    for (var element in CountryCode.dataCountryCode) {
-      String code = element[2];
-      String codeTelp = substring(0, code.length);
-      if (codeTelp.contains(code)) {
-        phoneNumber = substring(code.length);
-        countryCode = code;
-        break;
-      }
+    phoneNumber = this;
+
+    phoneNumber = phoneNumber.replaceAll(RegExp(r'\D'), '');
+
+    // Kiểm tra độ dài và định dạng lại số điện thoại
+    if (phoneNumber.length == 10) {
+      phoneNumber =
+      '${phoneNumber.substring(0, 3)} ${phoneNumber.substring(3, 6)} ${phoneNumber.substring(6)}';
+    } else if (phoneNumber.length > 10) {
+      phoneNumber = phoneNumber.substring(0, 10); // Chỉ lấy 10 ký tự đầu
+      phoneNumber =
+      '${phoneNumber.substring(0, 3)} ${phoneNumber.substring(3, 6)} ${phoneNumber.substring(6)}';
+    } else {
+      // Xử lý cho các số ngắn hơn 10 ký tự
+      phoneNumber = phoneNumber.replaceAllMapped(
+          RegExp(r'(\d{1,3})(\d{1,3})?(\d+)?'),
+              (Match m) => '${m[1] ?? ''} ${m[2] ?? ''} ${m[3] ?? ''}'.trim());
     }
 
-    String result = '+$countryCode $phoneNumber';
-
-    return result;
+    return phoneNumber;
   }
 }
 
