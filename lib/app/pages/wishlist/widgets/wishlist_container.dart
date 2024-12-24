@@ -132,7 +132,7 @@ class WishlistContainer extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          '${wishlist.product!.rating}' ' ' '(${wishlist.product!.totalReviews} Reviews)',
+                          '${wishlist.product!.rating}' ' ' '(${wishlist.product!.totalReviews} đánh giá)',
                         ),
                       ],
                     ),

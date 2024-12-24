@@ -165,7 +165,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         // Chuyển đến màn hình chọn phương thức thanh toán
                         NavigateRoute.toPayment(context: context);
                       },
-                      child: const Text('Lựa chọn phương thức thanh toán'),
+                      child: const Text('Tiếp'),
                     ),
                   ],
                 ),
