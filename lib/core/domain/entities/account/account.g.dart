@@ -11,7 +11,7 @@ Account _$AccountFromJson(Map<String, dynamic> json) => Account(
       fullName: json['full_name'] as String,
       emailAddress: json['email_address'] as String,
       phoneNumber: json['phone_number'] as String,
-      role: json['role'] as int,
+      role: (json['role'] as num).toInt(),
       banStatus: json['ban_status'] as bool,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),

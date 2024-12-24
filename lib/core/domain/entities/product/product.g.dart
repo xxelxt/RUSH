@@ -14,9 +14,9 @@ Product _$ProductFromJson(Map<String, dynamic> json) => Product(
       productImage: (json['product_image'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
-      totalReviews: json['total_reviews'] as int,
+      totalReviews: (json['total_reviews'] as num).toInt(),
       rating: (json['rating'] as num).toDouble(),
-      stock: json['stock'] as int,
+      stock: (json['stock'] as num).toInt(),
       isDeleted: json['is_deleted'] as bool,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),

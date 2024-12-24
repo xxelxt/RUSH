@@ -43,6 +43,10 @@ class AccountProvider with ChangeNotifier {
   late Account _account;
   Account get account => _account;
 
+  // Setter chỉ sử dụng trong môi trường test
+  @visibleForTesting
+  set account(Account value) => _account = value;
+
   // Biến lưu danh sách tài khoản
   List<Account> _listAccount = [];
   List<Account> get listAccount => _listAccount;

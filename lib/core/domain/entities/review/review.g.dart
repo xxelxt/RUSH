@@ -11,7 +11,7 @@ Review _$ReviewFromJson(Map<String, dynamic> json) => Review(
       productId: json['product_id'] as String,
       product: Product.fromJson(json['product'] as Map<String, dynamic>),
       accountId: json['account_id'] as String,
-      star: json['star'] as int,
+      star: (json['star'] as num).toInt(),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       reviewerName: json['reviewer_name'] as String,

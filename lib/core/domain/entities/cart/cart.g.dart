@@ -12,7 +12,7 @@ Cart _$CartFromJson(Map<String, dynamic> json) => Cart(
       product: json['product'] == null
           ? null
           : Product.fromJson(json['product'] as Map<String, dynamic>),
-      quantity: json['quantity'] as int,
+      quantity: (json['quantity'] as num).toInt(),
       total: (json['total'] as num).toDouble(),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),

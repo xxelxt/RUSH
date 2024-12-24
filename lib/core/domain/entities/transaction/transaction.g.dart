@@ -28,7 +28,7 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) => Transaction(
       totalBill: (json['total_bill'] as num?)?.toDouble(),
       serviceFee: (json['service_fee'] as num?)?.toDouble(),
       totalPay: (json['total_pay'] as num?)?.toDouble(),
-      transactionStatus: json['transaction_status'] as int?,
+      transactionStatus: (json['transaction_status'] as num?)?.toInt(),
       createdAt: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
