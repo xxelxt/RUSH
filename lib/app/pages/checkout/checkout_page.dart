@@ -36,7 +36,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Thanh toán'),
+        title: const Text('Đặt hàng'),
       ),
       body: Consumer<CheckoutProvider>(
         builder: (context, value, child) {

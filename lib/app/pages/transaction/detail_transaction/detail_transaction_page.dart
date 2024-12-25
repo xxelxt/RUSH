@@ -157,14 +157,19 @@ class _DetailTransactionPageState extends State<DetailTransactionPage> {
 
   // Hàm tiện ích để tạo Container bo tròn
   Widget _buildRoundedContainer(BuildContext context, {required Widget child}) {
+    // Kiểm tra trạng thái chế độ tối
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        // Áp dụng màu nền dựa trên chế độ sáng/tối
+        color: isDarkMode ? Color(0xFF201710) : Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            // Thay đổi độ mờ của bóng dựa trên chế độ sáng/tối
+            color: isDarkMode ? Colors.black.withOpacity(0.3) : Colors.black.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

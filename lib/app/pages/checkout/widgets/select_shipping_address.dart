@@ -54,7 +54,7 @@ class SelectShippingAddress extends StatelessWidget {
               Icons.add_rounded,
               color: ColorsValue.primaryColor(context),
             ),
-            label: const Text('Thêm địa chỉ mới'),
+            label: const Text('Thêm địa chỉ'),
           ),
 
         // Hiển thị thông tin địa chỉ giao hàng khi đã có địa chỉ

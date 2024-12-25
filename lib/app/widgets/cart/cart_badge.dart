@@ -68,7 +68,7 @@ class CartBadge extends StatelessWidget {
 
                             if (value.listCart.isEmpty)
                               Text(
-                                'Giỏ hàng trống',
+                                'Giỏ hàng của bạn hiện đang trống',
                                 style: Theme.of(context).textTheme.bodyMedium,
                               ),
 
@@ -127,7 +127,7 @@ class CartBadge extends StatelessWidget {
                                       checkoutProvider.start(cart: value.listCart, account: account); // Bắt đầu thanh toán
                                       NavigateRoute.toCheckout(context: context); // Chuyển đến trang thanh toán
                                     },
-                                    child: Text('Thanh toán (${value.countCart.toNumericFormat()})'),
+                                    child: Text('Đặt hàng (${value.countCart.toNumericFormat()})'),
                                   ),
                                 ],
                               ),
