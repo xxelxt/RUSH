@@ -27,102 +27,105 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 16,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Logo SVG
-              SvgPicture.asset(
-                'assets/images/logo.svg',
-                semanticsLabel: 'Logo',
-                colorFilter: ColorFilter.mode(
-                  ColorsValue.primaryColor(context),
-                  BlendMode.srcIn,
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Tiêu đề
-              Text(
-                'Quên mật khẩu',
-                style: Theme.of(context).textTheme.titleLarge,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Vui lòng nhập địa chỉ email bạn đã đăng ký tài khoản. Chúng tôi sẽ gửi cho bạn email đặt lại mật khẩu.',
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              const SizedBox(height: 32),
-
-              // Form nhập địa chỉ email
-              Form(
-                key: _formKey,
-                child: TextFormField(
-                  controller: _txtEmailAddress,
-                  focusNode: _fnEmailAddress,
-                  validator: validation.emailValidation,
-                  keyboardType: TextInputType.emailAddress,
-                  onFieldSubmitted: (value) => FocusScope.of(context).unfocus(),
-                  decoration: const InputDecoration(
-                    hintText: 'Nhập địa chỉ email của bạn',
-                    labelText: 'Địa chỉ email',
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 16,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Logo SVG
+                SvgPicture.asset(
+                  'assets/images/logo.svg',
+                  semanticsLabel: 'Logo',
+                  colorFilter: ColorFilter.mode(
+                    ColorsValue.primaryColor(context),
+                    BlendMode.srcIn,
                   ),
                 ),
-              ),
-              const SizedBox(height: 32),
+                const SizedBox(height: 16),
 
-              // Nút đặt lại mật khẩu
-              Consumer<AuthProvider>(
-                builder: (context, value, child) {
-                  // Hiển thị vòng tròn loading nếu đang xử lý
-                  if (value.isLoading) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
+                // Tiêu đề
+                Text(
+                  'Quên mật khẩu',
+                  style: Theme.of(context).textTheme.titleLarge,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Vui lòng nhập địa chỉ email tài khoản bạn đã đăng ký. Chúng tôi sẽ gửi cho bạn email đặt lại mật khẩu.',
+                  style: Theme.of(context).textTheme.titleSmall,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 32),
 
-                  return ElevatedButton(
-                    onPressed: () async {
-                      FocusScope.of(context).unfocus(); // Ẩn bàn phím
-                      // Kiểm tra form hợp lệ
-                      if (_formKey.currentState!.validate() && !value.isLoading) {
-                        try {
-                          ScaffoldMessenger.of(context).removeCurrentMaterialBanner();
+                // Form nhập địa chỉ email
+                Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    controller: _txtEmailAddress,
+                    focusNode: _fnEmailAddress,
+                    validator: validation.emailValidation,
+                    keyboardType: TextInputType.emailAddress,
+                    onFieldSubmitted: (value) => FocusScope.of(context).unfocus(),
+                    decoration: const InputDecoration(
+                      hintText: 'Nhập địa chỉ email của bạn',
+                      labelText: 'Địa chỉ email',
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
 
-                          // Gửi yêu cầu đặt lại mật khẩu
-                          await value
-                              .resetPassword(
-                            email: _txtEmailAddress.text, // Email nhập vào
-                          )
-                              .whenComplete(() {
-                            _formKey.currentState!.reset(); // Reset form
+                // Nút đặt lại mật khẩu
+                Consumer<AuthProvider>(
+                  builder: (context, value, child) {
+                    // Hiển thị vòng tròn loading nếu đang xử lý
+                    if (value.isLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Đã gửi email'),
-                              ),
-                            );
-                          });
-                        } catch (e) {
-                          if (mounted) {
+                    return ElevatedButton(
+                      onPressed: () async {
+                        FocusScope.of(context).unfocus(); // Ẩn bàn phím
+                        // Kiểm tra form hợp lệ
+                        if (_formKey.currentState!.validate() && !value.isLoading) {
+                          try {
                             ScaffoldMessenger.of(context).removeCurrentMaterialBanner();
-                            ScaffoldMessenger.of(context).showMaterialBanner(
-                              errorBanner(context: context, msg: e.toString()),
-                            );
+
+                            // Gửi yêu cầu đặt lại mật khẩu
+                            await value
+                                .resetPassword(
+                              email: _txtEmailAddress.text, // Email nhập vào
+                            )
+                                .whenComplete(() {
+                              _formKey.currentState!.reset(); // Reset form
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Đã gửi email'),
+                                ),
+                              );
+                            });
+                          } catch (e) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).removeCurrentMaterialBanner();
+                              ScaffoldMessenger.of(context).showMaterialBanner(
+                                errorBanner(context: context, msg: e.toString()),
+                              );
+                            }
                           }
                         }
-                      }
-                    },
-                    child: const Text('Đặt lại mật khẩu'),
-                  );
-                },
-              ),
-            ],
+                      },
+                      child: const Text('Đặt lại mật khẩu'),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

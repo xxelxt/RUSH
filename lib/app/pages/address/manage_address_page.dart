@@ -77,7 +77,7 @@ class _ManageAddressPageState extends State<ManageAddressPage> {
                       if (value.listAddress.isEmpty)
                         Center(
                           child: Text(
-                            'Không có địa chỉ nào\nVui lòng thêm địa chỉ để chúng mình có thể ship hàng đến cho bạn nhé!',
+                            'Bạn chưa thêm địa chỉ giao hàng nào',
                             style: Theme.of(context).textTheme.bodyMedium,
                             textAlign: TextAlign.center,
                           ),

@@ -45,7 +45,7 @@ class Transaction {
   double? totalPay = 0;
 
   @JsonKey(name: 'transaction_status')
-  int? transactionStatus = 0; // 0: Processed, 1: Sent, 2: Arrived, 3: Done, 4: Cancelled
+  int? transactionStatus = 0;
 
   @JsonKey(name: 'created_at')
   DateTime? createdAt;

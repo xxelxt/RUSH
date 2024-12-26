@@ -169,7 +169,7 @@ class _DetailTransactionPageState extends State<DetailTransactionPage> {
         boxShadow: [
           BoxShadow(
             // Thay đổi độ mờ của bóng dựa trên chế độ sáng/tối
-            color: isDarkMode ? Colors.black.withOpacity(0.3) : Colors.black.withOpacity(0.1),
+            color: isDarkMode ? Colors.black.withOpacity(0.1) : Colors.black.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

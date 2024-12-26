@@ -93,7 +93,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 Text(
-                  'Khám phá RUSH với tài khoản cá nhân của riêng bạn',
+                  'Khám phá RUSH với tài khoản cá nhân của bạn',
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
 

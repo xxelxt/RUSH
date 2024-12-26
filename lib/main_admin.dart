@@ -11,6 +11,8 @@ import 'firebase_options_admin.dart';
 
 // flutter run --flavor admin -t .\lib\main_admin.dart -v
 
+// LIGHT IT UP FOLKS: flutter build apk --flavor admin -t lib/main_admin.dart -v --target-platform android-arm64
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
