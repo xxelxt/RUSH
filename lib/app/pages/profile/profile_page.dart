@@ -30,6 +30,13 @@ class _ProfilePageState extends State<ProfilePage> {
   final ImagePicker _picker = ImagePicker();
 
   @override
+  void initState() {
+    super.initState();
+    // Tải thông tin người dùng khi trang được khởi tạo
+    context.read<AccountProvider>().getProfile();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Consumer<AccountProvider>(
@@ -149,24 +156,24 @@ class _ProfilePageState extends State<ProfilePage> {
                   const Divider(height: 1),
 
                   // Quản lý địa chỉ
-                  if (flavor.flavor == Flavor.user)
+                  if (FlavorConfig.instance.flavor == Flavor.user)
                     ActionRow(
                       label: 'Địa chỉ giao hàng',
                       onTap: () {
                         NavigateRoute.toManageAddress(context: context);
                       },
                     ),
-                  if (flavor.flavor == Flavor.user) const Divider(height: 1),
+                  if (FlavorConfig.instance.flavor == Flavor.user) const Divider(height: 1),
 
                   // Quản lý phương thức thanh toán
-                  if (flavor.flavor == Flavor.user)
+                  if (FlavorConfig.instance.flavor == Flavor.user)
                     ActionRow(
                       label: 'Phương thức thanh toán',
                       onTap: () {
                         NavigateRoute.toManagePaymentMethod(context: context);
                       },
                     ),
-                  if (flavor.flavor == Flavor.user) const Divider(height: 1),
+                  if (FlavorConfig.instance.flavor == Flavor.user) const Divider(height: 1),
 
                   // Chế độ tối
                   Padding(
@@ -206,6 +213,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     label: 'Đăng xuất',
                     onTap: () {
                       context.read<AuthProvider>().logout(); // Gọi hàm đăng xuất
+                      context.read<AccountProvider>().getProfile(); // Tải lại thông tin người dùng
                     },
                   ),
                   const SizedBox(height: 32),
