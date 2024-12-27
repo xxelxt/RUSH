@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:provider/provider.dart';
 import '../../../../routes.dart';
 import '../../navigation/bottom_navigation.dart';
@@ -23,21 +24,16 @@ class _LoginPageState extends State<LoginPage> {
   FlavorConfig flavor = FlavorConfig.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  // TextEditingController
   final TextEditingController _txtEmailAddress = TextEditingController();
   final TextEditingController _txtPassword = TextEditingController();
 
-  // FocusNode
   final FocusNode _fnEmailAddress = FocusNode();
   final FocusNode _fnPassword = FocusNode();
 
-  // Trạng thái ẩn/hiện mật khẩu
   bool _obsecureText = true;
 
-  // Instance của lớp ValidationType để xác thực
   ValidationType validation = ValidationType.instance;
 
-  // Giải phóng bộ nhớ
   @override
   void dispose() {
     _txtEmailAddress.dispose();
@@ -47,7 +43,6 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  // Hàm đăng nhập bằng Google
   Future<void> _loginWithGoogle() async {
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -73,6 +68,29 @@ class _LoginPageState extends State<LoginPage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Đăng nhập Google thất bại: $e')),
+      );
+    }
+  }
+
+  Future<void> _loginWithFacebook() async {
+    try {
+      final LoginResult result = await FacebookAuth.instance.login();
+
+      if (result.status == LoginStatus.success) {
+        final accessToken = result.accessToken;
+        if (accessToken != null) {
+          print('Đăng nhập Facebook thành công: ${accessToken.token}');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const BottomNavigation()),
+          );
+        }
+      } else {
+        throw Exception('Đăng nhập Facebook thất bại');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Đăng nhập Facebook thất bại: $e')),
       );
     }
   }
@@ -207,9 +225,7 @@ class _LoginPageState extends State<LoginPage> {
                           children: [
                             IconButton(
                               icon: const FaIcon(FontAwesomeIcons.facebook, size: 40, color: Colors.blue),
-                              onPressed: () {
-                                // Thêm logic đăng nhập Facebook
-                              },
+                              onPressed: _loginWithFacebook,
                             ),
                             const SizedBox(width: 20),
                             IconButton(
