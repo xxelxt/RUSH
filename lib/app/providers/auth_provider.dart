@@ -228,4 +228,65 @@ class AuthProvider with ChangeNotifier {
       );
     }
   }
+
+  Future<void> loginWithGoogle(BuildContext context) async {
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+      if (googleUser == null) {
+        throw Exception('Người dùng đã hủy đăng nhập.');
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+      await googleUser.authentication;
+
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+        accessToken: googleAuth.accessToken,
+      );
+
+      // Đăng nhập Firebase bằng credential từ Google
+      final UserCredential userCredential =
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+      // Kiểm tra nếu người dùng đã tồn tại trong Firestore
+      final userDoc = await FirebaseFirestore.instance
+          .collection(CollectionsName.kACCOUNT)
+          .doc(userCredential.user!.uid)
+          .get();
+
+      if (!userDoc.exists) {
+        // Thêm thông tin người dùng vào Firestore với các giá trị mặc định
+        await FirebaseFirestore.instance
+            .collection(CollectionsName.kACCOUNT)
+            .doc(userCredential.user!.uid)
+            .set({
+          'account_id': userCredential.user!.uid,
+          'full_name': googleUser.displayName ?? 'Người dùng Google',
+          'email_address': googleUser.email ?? 'unknown_email@gmail.com',
+          'phone_number': userCredential.user!.phoneNumber ?? '0', // Nếu có số điện thoại
+          'role': FlavorConfig.instance.flavor.roleValue,
+          'ban_status': false,
+          'primary_payment_method': null, // Không có phương thức thanh toán ban đầu
+          'primary_address': null, // Không có địa chỉ ban đầu
+          'photo_profile_url': googleUser.photoUrl ?? '', // URL ảnh đại diện từ Google
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
+        });
+        debugPrint('Người dùng mới được đăng ký thành công.');
+      } else {
+        debugPrint('Người dùng đã tồn tại.');
+      }
+
+      // Kiểm tra trạng thái sau khi đăng nhập
+      await isLoggedIn();
+    } catch (e) {
+      debugPrint('Lỗi khi đăng nhập Google: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Đăng nhập Google thất bại: $e')),
+      );
+    }
+  }
+
 }

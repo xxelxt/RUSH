@@ -67,4 +67,5 @@ class DefaultFirebaseOptions {
     databaseURL: 'https://rush-8753d-default-rtdb.firebaseio.com',
     storageBucket: 'rush-8753d.firebasestorage.app',
   );
+
 }

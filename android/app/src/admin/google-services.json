@@ -13,7 +13,20 @@
           "package_name": "com.xxelxt.rush.admin"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "889463514949-r7l16dg3ohe5qmm9sfpulbr3l9c1ev98.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.xxelxt.rush.admin",
+            "certificate_hash": "55b1953e4ae76d47042ed0d05e05c24be8c0ae89"
+          }
+        },
+        {
+          "client_id": "889463514949-ll1i3cerra5a46b370igri82r2s33gkg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCvfA2urD7TbZIlRKVtlpKXy2lXzUIWvpM"
@@ -21,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "889463514949-ll1i3cerra5a46b370igri82r2s33gkg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     },
@@ -32,7 +50,20 @@
           "package_name": "com.xxelxt.rush.user"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "889463514949-nich7irdopq043vovlpda75b25liah72.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.xxelxt.rush.user",
+            "certificate_hash": "55b1953e4ae76d47042ed0d05e05c24be8c0ae89"
+          }
+        },
+        {
+          "client_id": "889463514949-ll1i3cerra5a46b370igri82r2s33gkg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCvfA2urD7TbZIlRKVtlpKXy2lXzUIWvpM"
@@ -40,7 +71,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "889463514949-ll1i3cerra5a46b370igri82r2s33gkg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
