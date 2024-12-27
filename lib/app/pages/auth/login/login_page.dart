@@ -7,8 +7,10 @@ import 'package:rush/config/flavor_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../routes.dart';
+import '../../navigation/bottom_navigation.dart';
 import 'widgets/sign_up_text.dart';
 
 class LoginPage extends StatefulWidget {
@@ -84,7 +86,8 @@ class _LoginPageState extends State<LoginPage> {
                 Form(
                   key: _formKey,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -94,7 +97,8 @@ class _LoginPageState extends State<LoginPage> {
                           focusNode: _fnEmailAddress,
                           validator: validation.emailValidation,
                           keyboardType: TextInputType.emailAddress,
-                          onFieldSubmitted: (value) => FocusScope.of(context).requestFocus(_fnPassword),
+                          onFieldSubmitted: (value) =>
+                              FocusScope.of(context).requestFocus(_fnPassword),
                           decoration: const InputDecoration(
                             hintText: 'Nhập địa chỉ email của bạn',
                             labelText: 'Địa chỉ email',
@@ -108,13 +112,17 @@ class _LoginPageState extends State<LoginPage> {
                           focusNode: _fnPassword,
                           obscureText: _obsecureText, // Ẩn/hiện mật khẩu
                           validator: validation.passwordValidation,
-                          onFieldSubmitted: (value) => FocusScope.of(context).unfocus(),
+                          onFieldSubmitted: (value) =>
+                              FocusScope.of(context).unfocus(),
                           decoration: InputDecoration(
                             suffixIcon: IconButton(
-                              icon: Icon(_obsecureText ? Icons.visibility_rounded : Icons.visibility_off_rounded),
+                              icon: Icon(_obsecureText
+                                  ? Icons.visibility_rounded
+                                  : Icons.visibility_off_rounded),
                               onPressed: () {
                                 setState(() {
-                                  _obsecureText = !_obsecureText; // Chuyển trạng thái ẩn/hiện
+                                  _obsecureText =
+                                  !_obsecureText; // Chuyển trạng thái ẩn/hiện
                                 });
                               },
                             ),
@@ -127,7 +135,9 @@ class _LoginPageState extends State<LoginPage> {
                         // Liên kết Quên mật khẩu
                         InkWell(
                           onTap: () {
-                            NavigateRoute.toForgotPassword(context: context); // Chuyển đến màn hình quên mật khẩu
+                            NavigateRoute.toForgotPassword(
+                                context:
+                                context); // Chuyển đến màn hình quên mật khẩu
                           },
                           child: Text(
                             'Quên mật khẩu?',
@@ -151,30 +161,43 @@ class _LoginPageState extends State<LoginPage> {
                               onPressed: () async {
                                 FocusScope.of(context).unfocus(); // Ẩn bàn phím
                                 // Kiểm tra form hợp lệ
-                                if (_formKey.currentState!.validate() && !value.isLoading) {
+                                if (_formKey.currentState!.validate() &&
+                                    !value.isLoading) {
                                   try {
-                                    ScaffoldMessenger.of(context).removeCurrentMaterialBanner();
+                                    ScaffoldMessenger.of(context)
+                                        .removeCurrentMaterialBanner();
 
                                     await value
                                         .login(
-                                      emailAddress: _txtEmailAddress.text, // Email nhập vào
-                                      password: _txtPassword.text, // Mật khẩu nhập vào
+                                      emailAddress: _txtEmailAddress
+                                          .text, // Email nhập vào
+                                      password: _txtPassword
+                                          .text, // Mật khẩu nhập vào
                                     )
                                         .then((e) {
                                       // Kiểm tra quyền tài khoản
                                       if (!value.isRoleValid) {
-                                        _formKey.currentState!.reset(); // Reset form
+                                        _formKey.currentState!
+                                            .reset(); // Reset form
 
-                                        ScaffoldMessenger.of(context).showMaterialBanner(
-                                          errorBanner(context: context, msg: 'Tài khoản của bạn không có quyền truy cập'),
+                                        ScaffoldMessenger.of(context)
+                                            .showMaterialBanner(
+                                          errorBanner(
+                                              context: context,
+                                              msg:
+                                              'Tài khoản của bạn không có quyền truy cập'),
                                         );
                                       }
                                     });
                                   } catch (e) {
                                     if (mounted) {
-                                      ScaffoldMessenger.of(context).removeCurrentMaterialBanner();
-                                      ScaffoldMessenger.of(context).showMaterialBanner(
-                                        errorBanner(context: context, msg: e.toString()),
+                                      ScaffoldMessenger.of(context)
+                                          .removeCurrentMaterialBanner();
+                                      ScaffoldMessenger.of(context)
+                                          .showMaterialBanner(
+                                        errorBanner(
+                                            context: context,
+                                            msg: e.toString()),
                                       );
                                     }
                                   }
@@ -188,6 +211,65 @@ class _LoginPageState extends State<LoginPage> {
 
                         // Liên kết class SignUpText()
                         const SignUpText(),
+
+                        const SizedBox(height: 32),
+
+                        // Tiêu đề đăng nhập bằng mạng xã hội
+                        const Text(
+                          'Hoặc đăng nhập bằng',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+                        // Nút đăng nhập bằng Google và Facebook
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: const FaIcon(FontAwesomeIcons.facebook,
+                                  size: 40, color: Colors.blue),
+                              onPressed: () async {
+                                try {
+                                  // Gọi phương thức login với Facebook từ AuthProvider
+                                  await Provider.of<AuthProvider>(context,
+                                      listen: false)
+                                      .loginWithFacebook();
+
+                                  // Nếu đăng nhập thành công, chuyển đến BottomNavigation
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                        const BottomNavigation()),
+                                  );
+                                } catch (e) {
+                                  // Nếu có lỗi, hiển thị thông báo lỗi và chuyển hướng về LoginPage
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Đăng nhập thất bại: ${e.toString()}')),
+                                  );
+
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                        const LoginPage()),
+                                  );
+                                }
+                              },
+                            ),
+                            const SizedBox(width: 20),
+                            IconButton(
+                              icon: const FaIcon(FontAwesomeIcons.google,
+                                  size: 40, color: Colors.red),
+                              onPressed: () {
+                                // Thêm logic đăng nhập bằng Google ở đây
+                              },
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),

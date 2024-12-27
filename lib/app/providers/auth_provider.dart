@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_final_fields
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rush/app/constants/collections_name.dart';
 import 'package:rush/config/flavor_config.dart';
@@ -9,6 +7,7 @@ import 'package:rush/core/domain/usecases/auth/logout_account.dart';
 import 'package:rush/core/domain/usecases/auth/register_account.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 class AuthProvider with ChangeNotifier {
   final LoginAccount loginAccount;
@@ -117,7 +116,7 @@ class AuthProvider with ChangeNotifier {
       );
 
       _isLoading = false;
-      isLoggedIn(); // Kiểm tra trạng thái sau đăng ký
+      await isLoggedIn(); // Kiểm tra trạng thái sau đăng ký
     } catch (e) {
       _isLoading = false; // Ngừng trạng thái tải nếu lỗi xảy ra
       notifyListeners();
@@ -132,7 +131,7 @@ class AuthProvider with ChangeNotifier {
       // Gọi usecase để xử lý đăng xuất
       await logoutAccount.execute();
 
-      isLoggedIn(); // Cập nhật trạng thái sau đăng xuất
+      await isLoggedIn(); // Cập nhật trạng thái sau đăng xuất
     } catch (e) {
       debugPrint('Lỗi khi đăng xuất: ${e.toString()}');
       rethrow;
@@ -155,6 +154,37 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
       debugPrint('Lỗi khi đặt lại mật khẩu: ${e.toString()}');
       rethrow;
+    }
+  }
+
+  // Đăng nhập bằng Facebook
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> loginWithFacebook() async {
+    try {
+      final LoginResult result = await FacebookAuth.instance.login(
+        permissions: ['email', 'public_profile'],
+      );
+
+      if (result.status == LoginStatus.success) {
+        // Lấy access token từ Facebook
+        final AccessToken accessToken = result.accessToken!;
+
+        // Sử dụng token để tạo credential
+        final OAuthCredential credential =
+        FacebookAuthProvider.credential(accessToken.token);
+
+        // Đăng nhập Firebase bằng credential từ Facebook
+        await _auth.signInWithCredential(credential);
+
+        // Kiểm tra trạng thái đăng nhập sau khi đăng nhập thành công
+        await isLoggedIn();
+        notifyListeners();
+      } else {
+        throw Exception('Facebook login failed');
+      }
+    } catch (e) {
+      throw Exception('Error logging in with Facebook: $e');
     }
   }
 }
