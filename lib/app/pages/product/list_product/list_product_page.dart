@@ -7,8 +7,8 @@ import 'package:rush/config/flavor_config.dart';
 import 'package:rush/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'widgets/product_container.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class ListProductPage extends StatefulWidget {
   const ListProductPage({super.key});
@@ -28,8 +28,24 @@ class _ListProductPageState extends State<ListProductPage> {
 
   String search = '';
 
+  final List<String> sliderImages = [
+    'assets/images/static_banners/banner_1.jpg',
+    'assets/images/static_banners/banner_2.jpg',
+    'assets/images/static_banners/banner_3.jpg',
+  ];
+
+  @override
+  void dispose() {
+    _txtSearch.dispose();
+    super.dispose();
+  }
+
+  @override
   @override
   Widget build(BuildContext context) {
+    // Kiểm tra chế độ Dark Mode
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       // Nút thêm sản phẩm cho admin flavor
       floatingActionButton: flavor.flavor == Flavor.admin
@@ -66,92 +82,125 @@ class _ListProductPageState extends State<ListProductPage> {
             );
           }
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 16,
-            ),
-            child: Column(
-              children: [
-                // Bộ đếm sản phẩm và tùy chọn sắp xếp
-                CountAndOption(
-                  count: value.listProduct.length,
-                  itemName: 'sản phẩm',
-                  isSort: true,
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (context) {
-                        return StatefulBuilder(
-                          builder: (context, setState) {
-                            return SortFilterChip(
-                              dataEnum: OrderByEnum.values.take(4).toList(), // Các kiểu sắp xếp
-                              onSelected: (value) {
-                                setState(() {
-                                  orderByEnum = value; // Cập nhật kiểu sắp xếp
-                                  orderByValue = getEnumValue(value);
-                                  context.read<ProductProvider>().loadListProduct(
-                                    search: _txtSearch.text, // Áp dụng tìm kiếm hiện tại
-                                    orderByEnum: orderByEnum,
-                                  );
-                                });
-                              },
-                              selectedEnum: orderByEnum,
+          // Thêm RefreshIndicator bọc CustomScrollView
+          return RefreshIndicator(
+            onRefresh: () async {
+              // Làm mới danh sách sản phẩm
+              await value.loadListProduct(
+                search: search,
+                orderByEnum: orderByEnum,
+              );
+            },
+            child: CustomScrollView(
+              slivers: [
+                // Phần CarouselSlider (biến mất khi cuộn)
+                SliverAppBar(
+                  expandedHeight: 160,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: CarouselSlider(
+                      options: CarouselOptions(
+                        height: 130,
+                        autoPlay: true,
+                        enlargeCenterPage: true,
+                      ),
+                      items: sliderImages.map((url) {
+                        return Builder(
+                          builder: (BuildContext context) {
+                            return ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: Image.asset(
+                                url,
+                                fit: BoxFit.cover,
+                              ),
                             );
                           },
                         );
-                      },
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
-
-                // Danh sách sản phẩm
-                if (value.listProduct.isEmpty && _txtSearch.text.isEmpty)
-                  const Center(
-                    child: Text(
-                      'Không có sản phẩm nào',
-                      textAlign: TextAlign.center,
+                      }).toList(),
                     ),
                   ),
+                  floating: false,
+                  pinned: false,
+                ),
 
-                if (value.listProduct.isEmpty && _txtSearch.text.isNotEmpty)
-                  const Center(
-                    child: Text('Không tìm thấy sản phẩm'),
-                  ),
-
-                if (value.listProduct.isNotEmpty)
-                  Expanded(
-                    child: RefreshIndicator(
-                      onRefresh: () async {
-                        // Làm mới danh sách sản phẩm
-                        await value.loadListProduct(
-                          search: search,
-                          orderByEnum: orderByEnum,
-                        );
-                      },
-                      child: GridView.builder(
-                        itemCount: value.listProduct.length, // Số lượng sản phẩm
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 8,
-                          childAspectRatio: MediaQuery.of(context).size.width /
-                              (MediaQuery.of(context).size.height / 1.4),
-                        ),
-                        itemBuilder: (_, index) {
-                          final item = value.listProduct[index]; // Sản phẩm hiện tại
-
-                          return ProductContainer(
-                            item: item, // Hiển thị sản phẩm
-                            onTap: () {
-                              NavigateRoute.toDetailProduct(context: context, productId: item.productId); // Điều hướng đến chi tiết sản phẩm
+                // Phần CountAndOption (cố định khi cuộn)
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _SliverPersistentHeaderDelegate(
+                    child: Container(
+                      color: isDarkMode ? Color(0xFF1A130D) : Color(0xFFFFF8F5), // Nền thay đổi theo chế độ sáng/tối
+                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      child: CountAndOption(
+                        count: value.listProduct.length,
+                        itemName: 'sản phẩm',
+                        isSort: true,
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) {
+                              return StatefulBuilder(
+                                builder: (context, setState) {
+                                  return SortFilterChip(
+                                    dataEnum: OrderByEnum.values.take(4).toList(), // Các kiểu sắp xếp
+                                    onSelected: (value) {
+                                      setState(() {
+                                        orderByEnum = value; // Cập nhật kiểu sắp xếp
+                                        orderByValue = getEnumValue(value);
+                                        context.read<ProductProvider>().loadListProduct(
+                                          search: _txtSearch.text, // Áp dụng tìm kiếm hiện tại
+                                          orderByEnum: orderByEnum,
+                                        );
+                                      });
+                                    },
+                                    selectedEnum: orderByEnum,
+                                  );
+                                },
+                              );
                             },
                           );
                         },
                       ),
                     ),
                   ),
+                ),
+
+                // Phần danh sách sản phẩm
+                value.listProduct.isNotEmpty
+                    ? SliverPadding(
+                  padding: const EdgeInsets.all(16),
+                  sliver: SliverGrid(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 20,
+                      mainAxisSpacing: 8,
+                      childAspectRatio: MediaQuery.of(context).size.width /
+                          (MediaQuery.of(context).size.height / 1.4),
+                    ),
+                    delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                        final item = value.listProduct[index];
+                        return ProductContainer(
+                          item: item,
+                          onTap: () {
+                            NavigateRoute.toDetailProduct(
+                              context: context,
+                              productId: item.productId,
+                            );
+                          },
+                        );
+                      },
+                      childCount: value.listProduct.length,
+                    ),
+                  ),
+                )
+                    : SliverFillRemaining(
+                  child: Center(
+                    child: Text(
+                      value.listProduct.isEmpty && _txtSearch.text.isEmpty
+                          ? 'Không có sản phẩm nào'
+                          : 'Không tìm thấy sản phẩm',
+                    ),
+                  ),
+                ),
               ],
             ),
           );
@@ -160,3 +209,25 @@ class _ListProductPageState extends State<ListProductPage> {
     );
   }
 }
+
+class _SliverPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+
+  _SliverPersistentHeaderDelegate({required this.child});
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return child;
+  }
+
+  @override
+  double get maxExtent => 60.0; // Chiều cao tối đa
+  @override
+  double get minExtent => 60.0; // Chiều cao tối thiểu
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
+    return true;
+  }
+}
+
