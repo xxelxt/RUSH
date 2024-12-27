@@ -93,11 +93,11 @@ class _ListProductPageState extends State<ListProductPage> {
             },
             child: CustomScrollView(
               slivers: [
-                // Phần CarouselSlider (biến mất khi cuộn)
-                SliverAppBar(
-                  expandedHeight: 160,
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: CarouselSlider(
+                // Phần carousel
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: CarouselSlider(
                       options: CarouselOptions(
                         height: 130,
                         autoPlay: true,
@@ -118,8 +118,6 @@ class _ListProductPageState extends State<ListProductPage> {
                       }).toList(),
                     ),
                   ),
-                  floating: false,
-                  pinned: false,
                 ),
 
                 // Phần CountAndOption (cố định khi cuộn)

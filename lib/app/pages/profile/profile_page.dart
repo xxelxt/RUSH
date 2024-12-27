@@ -30,6 +30,13 @@ class _ProfilePageState extends State<ProfilePage> {
   final ImagePicker _picker = ImagePicker();
 
   @override
+  void initState() {
+    super.initState();
+    // Tải thông tin người dùng khi trang được khởi tạo
+    context.read<AccountProvider>().getProfile();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Consumer<AccountProvider>(
@@ -206,6 +213,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     label: 'Đăng xuất',
                     onTap: () {
                       context.read<AuthProvider>().logout(); // Gọi hàm đăng xuất
+                      context.read<AccountProvider>().getProfile();
                     },
                   ),
                   const SizedBox(height: 32),

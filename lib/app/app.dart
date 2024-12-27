@@ -117,6 +117,7 @@ class _AppState extends State<App> {
             loginAccount: LoginAccount(_authRepositoryImpl),
             registerAccount: RegisterAccount(_authRepositoryImpl),
             logoutAccount: LogoutAccount(_authRepositoryImpl),
+
           )..isLoggedIn(), // Kiểm tra trạng thái đăng nhập
         ),
 

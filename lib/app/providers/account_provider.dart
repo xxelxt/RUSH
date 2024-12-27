@@ -1,8 +1,7 @@
-import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:http/http.dart' as http;
 
+import 'package:http/http.dart' as http;
 import 'package:rush/app/constants/order_by_value.dart';
 import 'package:rush/core/domain/entities/account/account.dart';
 import 'package:rush/core/domain/usecases/account/ban_account.dart';
@@ -11,11 +10,9 @@ import 'package:rush/core/domain/usecases/account/get_all_account.dart';
 import 'package:rush/core/domain/usecases/account/update_account.dart';
 import 'package:rush/utils/compress_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-// Sử dụng `ChangeNotifier` để quản lý trạng thái và thông báo cập nhật UI
 class AccountProvider with ChangeNotifier {
   final GetAccountProfile getAccountProfile;
   final GetAllAccount getAllAccount;
@@ -29,25 +26,21 @@ class AccountProvider with ChangeNotifier {
     required this.banAccount,
   });
 
-  // Các biến trạng thái
-  bool _isLoadProfile = true; // Trạng thái đang tải thông tin tài khoản
+  bool _isLoadProfile = true;
   bool get isLoadProfile => _isLoadProfile;
 
-  bool _isLoadListAccount = true; // Trạng thái đang tải danh sách tài khoản
+  bool _isLoadListAccount = true;
   bool get isLoadListAccount => _isLoadListAccount;
 
-  bool _isLoading = false; // Trạng thái chung đang xử lý
+  bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  // Biến lưu thông tin tài khoản
   late Account _account;
   Account get account => _account;
 
-  // Setter chỉ sử dụng trong môi trường test
   @visibleForTesting
   set account(Account value) => _account = value;
 
-  // Biến lưu danh sách tài khoản
   List<Account> _listAccount = [];
   List<Account> get listAccount => _listAccount;
 
@@ -77,23 +70,20 @@ class AccountProvider with ChangeNotifier {
     }
   }
 
-  // Lấy thông tin tài khoản hiện tại
   getProfile() async {
     try {
-      _isLoadProfile = true; // Đặt trạng thái đang tải
-      notifyListeners(); // Cập nhật UI
+      _isLoadProfile = true;
+      notifyListeners();
 
-      // Lấy ID tài khoản hiện tại
       String accountId = FirebaseAuth.instance.currentUser!.uid;
 
-      // Gọi usecase để lấy thông tin tài khoản
       var response = await getAccountProfile.execute(accountId: accountId);
 
       if (response != null) {
-        _account = response; // Cập nhật thông tin tài khoản
+        _account = response;
       }
 
-      _isLoadProfile = false; // Hoàn thành tải
+      _isLoadProfile = false;
       notifyListeners();
     } catch (e) {
       _isLoadProfile = false;
@@ -102,7 +92,6 @@ class AccountProvider with ChangeNotifier {
     }
   }
 
-  // Lấy danh sách tài khoản với các tuỳ chọn tìm kiếm và sắp xếp
   getListAccount({
     String search = '',
     OrderByEnum orderByEnum = OrderByEnum.newest,
@@ -112,14 +101,12 @@ class AccountProvider with ChangeNotifier {
       notifyListeners();
       _listAccount.clear();
 
-      // Gọi usecase để lấy danh sách tài khoản
       var response = await getAllAccount.execute();
 
       if (response.isNotEmpty) {
-        _listAccount = response; // Lưu danh sách tài khoản
-        sortList(orderByEnum); // Sắp xếp danh sách
+        _listAccount = response;
+        sortList(orderByEnum);
 
-        // Lọc danh sách theo từ khoá tìm kiếm nếu có
         if (search.isNotEmpty) {
           _listAccount = _listAccount
               .where((element) =>
@@ -137,19 +124,17 @@ class AccountProvider with ChangeNotifier {
     }
   }
 
-  // Cập nhật thông tin tài khoản
   update({required Map<String, dynamic> data}) async {
     try {
       _isLoading = true;
       notifyListeners();
 
-      // Gọi usecase để cập nhật thông tin tài khoản
       await updateAccount.execute(accountId: account.accountId, data: data);
 
       _isLoading = false;
       notifyListeners();
 
-      getProfile(); // Lấy lại thông tin tài khoản sau khi cập nhật
+      getProfile();
     } catch (e) {
       _isLoading = false;
       debugPrint('Lỗi khi cập nhật thông tin tài khoản: ${e.toString()}');
@@ -157,11 +142,10 @@ class AccountProvider with ChangeNotifier {
     }
   }
 
-  // Khoá hoặc mở khoá tài khoản
   ban({required String accountId, required bool ban}) async {
     try {
-      await banAccount.execute(accountId: accountId, ban: ban); // Gọi usecase
-      getListAccount(); // Cập nhật lại danh sách tài khoản
+      await banAccount.execute(accountId: accountId, ban: ban);
+      getListAccount();
     } catch (e) {
       _isLoading = false;
       debugPrint('Lỗi khi khoá tài khoản: ${e.toString()}');
@@ -169,22 +153,16 @@ class AccountProvider with ChangeNotifier {
     }
   }
 
-  // Cập nhật ảnh đại diện
   updatePhotoProfile(XFile image) async {
     try {
       _isLoading = true;
       notifyListeners();
 
-      // Đọc dữ liệu ảnh từ file
       Uint8List data = await image.readAsBytes();
-
-      // Nén ảnh để tối ưu kích thước
       data = await CompressImage.startCompress(data);
 
-      // Tải ảnh lên Cloudinary
       String imageUrl = await uploadImageToCloudinary(data, image.name);
 
-      // Cập nhật URL ảnh đại diện trong tài khoản
       await updateAccount.execute(accountId: account.accountId, data: {
         'photo_profile_url': imageUrl,
       });
@@ -192,7 +170,7 @@ class AccountProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
 
-      getProfile(); // Cập nhật lại thông tin tài khoản sau khi thay đổi ảnh
+      getProfile();
     } catch (e) {
       _isLoading = false;
       debugPrint('Lỗi cập nhật ảnh đại diện: ${e.toString()}');
@@ -200,7 +178,6 @@ class AccountProvider with ChangeNotifier {
     }
   }
 
-  // Sắp xếp danh sách tài khoản
   sortList(OrderByEnum data) {
     switch (data) {
       case OrderByEnum.newest:

@@ -9,11 +9,16 @@ import 'package:rush/core/domain/usecases/auth/logout_account.dart';
 import 'package:rush/core/domain/usecases/auth/register_account.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthProvider with ChangeNotifier {
   final LoginAccount loginAccount;
   final RegisterAccount registerAccount;
   final LogoutAccount logoutAccount;
+
+  late Account _account; // Biến lưu trữ thông tin tài khoản
+  Account get account => _account;
 
   AuthProvider({
     required this.loginAccount,
@@ -41,34 +46,41 @@ class AuthProvider with ChangeNotifier {
 
   // Kiểm tra trạng thái đăng nhập của người dùng
   isLoggedIn() async {
-    _checkUser = true; // Bắt đầu kiểm tra trạng thái
+    _checkUser = true;
     FirebaseAuth authInstance = FirebaseAuth.instance;
 
-    // Kiểm tra nếu có người dùng hiện tại
     if (authInstance.currentUser != null) {
-      // Lấy thông tin tài khoản từ Firestore
       var data = await FirebaseFirestore.instance
           .collection(CollectionsName.kACCOUNT)
           .doc(authInstance.currentUser!.uid)
           .get();
 
-      Account account = Account.fromJson(data.data()!);
+      if (data.exists) {
+        try {
+          _account = Account.fromJson(data.data()!);
+        } catch (e) {
+          debugPrint('Lỗi khi khởi tạo Account: $e');
+        }
 
-      // Kiểm tra vai trò người dùng và trạng thái bị khoá
-      if (account.role == FlavorConfig.instance.flavor.roleValue && !account.banStatus) {
-        _isUserLoggedIn = true; // Người dùng hợp lệ
-        _isRoleValid = true;
+        if (_account.role == FlavorConfig.instance.flavor.roleValue &&
+            !_account.banStatus) {
+          _isUserLoggedIn = true;
+          _isRoleValid = true;
+        } else {
+          authInstance.signOut();
+          _isRoleValid = false;
+          _isUserLoggedIn = false;
+        }
       } else {
-        authInstance.signOut(); // Đăng xuất nếu không hợp lệ
-        _isRoleValid = false;
+        debugPrint('Tài khoản không tồn tại trong Firestore.');
         _isUserLoggedIn = false;
       }
     } else {
-      _isUserLoggedIn = false; // Không có người dùng đăng nhập
+      _isUserLoggedIn = false;
     }
 
-    _checkUser = false; // Hoàn thành kiểm tra
-    notifyListeners(); // Cập nhật trạng thái UI
+    _checkUser = false;
+    notifyListeners();
   }
 
   // Phương thức đăng nhập
@@ -110,7 +122,7 @@ class AuthProvider with ChangeNotifier {
       // Gọi Use Case để xử lý đăng ký
       await registerAccount.execute(
         email: emailAddress,
-        password: password,
+        password: password.isEmpty ? 'default_password' : password, // Đặt mật khẩu mặc định nếu rỗng
         fullName: fullName,
         phoneNumber: phoneNumber,
         role: FlavorConfig.instance.flavor.roleValue, // Vai trò mặc định từ cấu hình
@@ -155,6 +167,65 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
       debugPrint('Lỗi khi đặt lại mật khẩu: ${e.toString()}');
       rethrow;
+    }
+  }
+
+  Future<void> loginWithFacebook(BuildContext context) async {
+    try {
+      final LoginResult result = await FacebookAuth.instance.login(
+        permissions: ['email', 'public_profile'],
+      );
+
+      if (result.status == LoginStatus.success) {
+        final AccessToken accessToken = result.accessToken!;
+        final OAuthCredential credential =
+        FacebookAuthProvider.credential(accessToken.token);
+
+        final UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+
+        final userData = await FacebookAuth.instance.getUserData(
+          fields: "name,email,picture.width(200).height(200)",
+        );
+
+        final userDoc = await FirebaseFirestore.instance
+            .collection(CollectionsName.kACCOUNT)
+            .doc(userCredential.user!.uid)
+            .get();
+
+        if (!userDoc.exists) {
+          // Thêm thông tin người dùng vào Firestore với các giá trị mặc định
+          await FirebaseFirestore.instance
+              .collection(CollectionsName.kACCOUNT)
+              .doc(userCredential.user!.uid)
+              .set({
+            'account_id': userCredential.user!.uid,
+            'full_name': userData['name'] ?? 'Người dùng Facebook',
+            'email_address': userData['email'] ?? 'unknown_email@facebook.com',
+            'phone_number': '0', // Facebook không cung cấp số điện thoại
+            'role': FlavorConfig.instance.flavor.roleValue,
+            'ban_status': false,
+            'primary_payment_method': null, // Không có phương thức thanh toán ban đầu
+            'primary_address': null, // Không có địa chỉ ban đầu
+            'photo_profile_url': '', // URL ảnh đại diện từ Facebook
+            'created_at': DateTime.now().toIso8601String(),
+            'updated_at': DateTime.now().toIso8601String(),
+          });
+          debugPrint('Người dùng mới được đăng ký thành công.');
+        } else {
+          debugPrint('Người dùng đã tồn tại.');
+        }
+
+        // Kiểm tra trạng thái sau khi đăng nhập
+        await isLoggedIn();
+      } else {
+        throw Exception('Đăng nhập Facebook thất bại.');
+      }
+    } catch (e) {
+      debugPrint('Lỗi khi đăng nhập Facebook: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Đăng nhập Facebook thất bại: $e')),
+      );
     }
   }
 }
