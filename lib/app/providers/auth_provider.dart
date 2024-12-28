@@ -238,15 +238,15 @@ class AuthProvider with ChangeNotifier {
         throw Exception('Người dùng đã hủy đăng nhập.');
       }
 
-      final GoogleSignInAuthentication googleAuth =
-      await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
+      // Tạo credential từ Google token
       final OAuthCredential credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
         accessToken: googleAuth.accessToken,
       );
 
-      // Đăng nhập Firebase bằng credential từ Google
+      // Đăng nhập Firebase bằng credential
       final UserCredential userCredential =
       await FirebaseAuth.instance.signInWithCredential(credential);
 
@@ -281,6 +281,11 @@ class AuthProvider with ChangeNotifier {
 
       // Kiểm tra trạng thái sau khi đăng nhập
       await isLoggedIn();
+    } on FirebaseAuthException catch (e) {
+      debugPrint('FirebaseAuthException: ${e.message}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Đăng nhập Google thất bại: ${e.message}')),
+      );
     } catch (e) {
       debugPrint('Lỗi khi đăng nhập Google: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -288,5 +293,6 @@ class AuthProvider with ChangeNotifier {
       );
     }
   }
+
 
 }
