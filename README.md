@@ -11,9 +11,9 @@
 | Họ và tên              | Mã sinh viên | 🔗 Link to GitHub profile                         |
 | ---------------------- | ------------ | ------------------------------------------------- |
 | Phạm Ngọc Nghiệp 🌟    | 24A4042603   | [xxelxt](https://github.com/xxelxt)               |
+| Đàm Thị Huyền Trang    | 25A4041962   | [Damhuyentrang](https://github.com/Damhuyentrang) |'
 | Bùi Phương Linh        | 25A4041557   | [bphglinh374](https://github.com/bphglinh374)     |
 | Lê Phương Linh         | 25A4041893   | [Bamboo-rat](https://github.com/Bamboo-rat)       |
-| Đàm Thị Huyền Trang    | 25A4041962   | [Damhuyentrang](https://github.com/Damhuyentrang) |'
 
 ### 🚀 Giới thiệu tên gọi
 
@@ -59,26 +59,31 @@
 | `badges`                         | `^3.1.2`       | Hiển thị huy hiệu (badge) cho widget                               |
 | `build_runner`                   | `^2.4.13`      | Tạo mã tự động (dùng với `json_serializable`)                      |
 | `cached_network_image`           | `^3.3.1`       | Hiển thị hình ảnh từ mạng với bộ nhớ đệm                           |
-| `cloud_firestore`                | `^4.16.0`      | Tương tác với Firestore Database                                   |
+| `carousel_slider`                | `^5.0.0`       | Hiển thị slider ảnh                                                |
+| `cloud_firestore`                | `^5.6.0`       | Tương tác với Firestore Database                                   |
 | `cloudinary_flutter`             | `^1.3.0`       | Tương tác với Cloudinary để quản lý và xử lý ảnh/video             |
 | `cloudinary_url_gen`             | `^1.6.0`       | Tạo URL động để quản lý hình ảnh và video trên Cloudinary          |
 | `equatable`                      | `^2.0.5`       | So sánh các đối tượng (sử dụng trong state management)             |
-| `firebase_auth`                  | `^4.19.0`      | Cung cấp các chức năng authenticate cho người dùng Firebase        |
-| `firebase_auth_mocks`            | `^0.13.0`      | Mô phỏng các chức năng firebase_auth trong kiểm thử                |
-| `firebase_core`                  | `^2.28.0`      | Cấu hình Firebase cơ bản                                           |
-| `firebase_database_mocks`        | `^0.6.1`       | Mô phỏng Firebase Database trong kiểm thử                          |
+| `firebase_auth`                  | `^5.3.4`       | Cung cấp các chức năng authenticate cho người dùng Firebase        |
+| ~~`firebase_auth_mocks`~~        | ~~`^0.14.1`~~  | ~~Mô phỏng các chức năng firebase_auth trong kiểm thử~~            |
+| `firebase_core`                  | `^3.9.0`       | Cấu hình Firebase cơ bản                                           |
+| ~~`firebase_database_mocks`~~    | ~~`^0.7.1`~~   | ~~Mô phỏng Firebase Database trong kiểm thử~~                      |
+| ~~`firebase_messaging`~~         | ~~`^15.1.6`~~  | ~~Gửi và nhận thông báo đẩy từ Firebase~~                          |
+| `firebase_storage`               | `^12.3.7`      | Lưu trữ và quản lý các tệp trong Firebase Storage                  |
+| `flutter_facebook_auth`          | `^6.2.0`       | Tích hợp đăng nhập Facebook                                        |
 | `flutter_image_compress`         | `^2.2.0`       | Nén hình ảnh để giảm kích thước tệp                                |
-| `flutter_launcher_icons`         | `^0.13.1`      | Tạo icon cho ứng dụng Flutter                                      |
-| `flutter_lints`                  | `^3.0.2`       | Cung cấp bộ quy tắc lint cho mã nguồn Flutter                      |
-| ~~`firebase_storage`~~           | ~~`^11.7.0`~~  | ~~Lưu trữ và quản lý các tệp trong Firebase Storage~~              |
+| `flutter_launcher_icons`         | `^0.14.2`      | Tạo icon cho ứng dụng Flutter                                      |
+| `flutter_lints`                  | `^5.0.0`       | Cung cấp bộ quy tắc lint cho mã nguồn Flutter                      |
 | `flutter_map`                    | `^5.0.0`       | Hiển thị bản đồ trong ứng dụng Flutter                             |
 | `flutter_native_splash`          | `^2.4.3`       | Tạo splash screen cho ứng dụng Flutter                             |
 | `flutter_svg`                    | `^2.0.10+1`    | Hiển thị các tệp SVG                                               |
-| `get_it`                         | `^7.6.8`       | Dependency injection và state management                           |
+| `font_awesome_flutter`           | `^10.8.0`      | Thêm các icon FontAwesome cho ứng dụng                             |
 | `geocoding`                      | `^3.0.0`       | Dịch mã địa lý thành thông tin địa chỉ                             |
-| `geolocator`                     | `^12.0.0`      | Xác định vị trí địa lý của thiết bị                                |
+| `geolocator`                     | `^13.0.2`      | Xác định vị trí địa lý của thiết bị                                |
+| `get_it`                         | `^8.0.3`       | Dependency injection và state management                           |
 | `google_fonts`                   | `^6.2.1`       | Sử dụng các font chữ từ Google Fonts                               |
-| `http`                           | `^1.1.0`       | Gửi và nhận các yêu cầu HTTP                                       |
+| `google_sign_in`                 | `^6.1.0`       | Tích hợp đăng nhập Google                                          |
+| `http`                           | `^1.2.2`       | Gửi và nhận các yêu cầu HTTP                                       |
 | `image_picker`                   | `^1.0.7`       | Chọn ảnh từ thư viện/chụp ảnh bằng camera                          |
 | `intl`                           | `^0.19.0`      | Xử lý định dạng số, ngày giờ và quốc tế hóa                        |
 | `json_annotation`                | `^4.8.1`       | Chú thích dữ liệu JSON cho các lớp Dart                            |
